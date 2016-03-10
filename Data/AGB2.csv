@@ -1,0 +1,44 @@
+Metric,Unites,EF_UI,SE_UI,SS_UI,EF_I,SE_I,SS_I,Var_type,Dom_nat,Inv,Service,Study,SiteID,Year,Latitude,Longitude,Native height,Invasive height
+Vegetation biomass,,90.2174,17.1425,8,153.6159,21.4345,8,SE,Hesperostipa comata,Agropyron cristatum,Yes,Henderson et al (2005),Henderson et al (2005)a,2005,50.34546,-109.995117,1,0.4
+Vegetation biomass,,90.2174,17.1425,8,153.6159,21.4345,8,SE,Hesperostipa comata,Agropyron cristatum,Yes,Henderson et al (2005),Henderson et al (2005)a,2005,50.34546,-109.995117,1,0.4
+Aboveground biomass,grams per metre squared,281.75,25.83602137,5,307,23.66035714,5,SE,Poa pratensis,Bromus tectorum,Yes,Ogle et al (2003),Ogle et al (2003)a,2003,43.58333333,-102.6333333,0.5,0.65
+Aboveground biomass,grams per metre squared,227,12.71072382,5,222.25,20.71382389,5,SE,Poa pratensis,Bromus tectorum,Yes,Ogle et al (2003),Ogle et al (2003)b,2003,43.58333333,-102.6333333,0.5,0.65
+Aboveground biomass,grams per metre squared,248,19.91230775,5,160,13.60147051,5,SE,Poa pratensis,Bromus tectorum,Yes,Ogle et al (2003),Ogle et al (2003)c,2003,43.58333333,-102.6333333,0.5,0.65
+Aboveground biomass,grams per metre squared,161,9.708243919,5,139.5,11.23610253,5,SE,Poa pratensis,Bromus tectorum,Yes,Ogle et al (2003),Ogle et al (2003)d,2003,43.58333333,-102.6333333,0.5,0.65
+Aboveground biomass,grams per metre squared,138.55185,17.95442432,7,208.7871,14.492593,7,SE,Avena fatua,Cynara cardunculus,Yes,Potts et al (2008),Potts et al (2008)a,2008,33.38,-117.5,0.75,1.15
+Aboveground biomass,kilograms per metre squared,0.25,0.290688837,5,0.89,0.223606798,5,SE,Agrostis stolonifera,Solidago gigantea,Yes,Vanderhoeven et al (2005),Vanderhoeven et al (2005)a,2005,50.862771,4.470963,0.7,2
+Aboveground biomass,kilograms per metre squared,0.56,0.670820393,5,2.39,1.587608264,5,SE,Arrhenatherum elatius,Fallopia japonica,Yes,Vanderhoeven et al (2005),Vanderhoeven et al (2005)e,2005,50.895427,4.416804,1.5,3.5
+Aboveground biomass,kilograms per metre squared,0.39,0.335410197,5,1.65,1.788854382,5,SE,Petasites hybridus,Fallopia japonica,Yes,Vanderhoeven et al (2005),Vanderhoeven et al (2005)f,2005,50.799751,4.414616,1,3.5
+Biomass,grams per metre squared,97.679,14.3237,7,114.3899,14.3236,7,SE,Pascopyrum smithii,Centaurea diffusa,Yes,Suding et al (2004),Suding et al (2004)a,2004,40.01388889,-105.2055556,0.6,0.35
+Aboveground biomass,,1941.80858,131.92386,3,2405.3246,184.64098,3,SE,Phragmites australis,Spartina alterniflora,Yes,Cheng et al (2007),Cheng et al (2007)a,2007,31.15,122,2,1.35
+Aboveground biomass,,42.0435,12.3299,5,69.75,15.27665,5,SE,Bouteloua gracialis,Agropyron cristatum,Yes,Christian et al (1999),Christian et al (1999)a,1999,49.36666667,-107.8833333,0.225,0.4
+Biomass,grams of dry matter per metre squared,357,43.68256708,6,917,62.05374015,6,SE,Dactylis glomerata,Solidago gigantea,Yes,Chapuis-Lardy et al 2006,Chapuis-Lardy et al 2006a,2006,50.85,4.416667,0.8,2
+Biomass,grams of dry matter per metre squared,252,51.4392846,6,891,41.64132563,6,SE,Agrostis stolonifera,Solidago gigantea,Yes,Chapuis-Lardy et al 2006,Chapuis-Lardy et al 2006b,2006,50.865778,4.469376,0.7,2
+Biomass,grams of dry matter per metre squared,438,69.81045767,6,760,69.40220938,6,SE,Calamagrostis epigejos,Solidago gigantea,Yes,Chapuis-Lardy et al 2006,Chapuis-Lardy et al 2006c,2006,50.453569,3.819122,1.3,2
+Aboveground biomass,grams of biomass per metre squared,147.8012,24.7796,5,214.8749,22.9445,5,SE,Krascheninnikovia lanata,Bromus tectorum,Yes,Blank et al 2008,Blank et al 2008a,2008,40.13633333,-120.0731667,0.75,0.65
+Aboveground plant biomass,grams per metre squared,290,12.34952226,3,354.8,33.42858059,3,SE,Eleocharis smallii,Typha x glauca,Yes,Angeloni et al 2006,Angeloni et al 2006a,2006,45.663007,-84.423323,0.45,1.35
+Aboveground carbon storage,grams of carbon per metre squared,340,145,10,94,26,10,SE,Artemisia tridentata,Bromus tectorum,Yes,Bradley et al 2006,Bradley et al 2006b,2006,41,-117.58,1.75,0.65
+Aboveground carbon storage,grams of carbon per metre squared,670,290,10,22,2,10,SE,Artemisia tridentata,Bromus tectorum,Yes,Bradley et al 2006,Bradley et al 2006c,2006,40.99,-117.86,1.75,0.65
+Aboveground biomass,tonnes per hectare of biomass,1.7,0.1,3,8.6,1,3,SE,Themeda trianda,Pennisetum polystachion,Yes,Douglas et al 2004,Douglas et al 2004a,2004,-13.15,130.65,1.5,1.65
+Biomass,,64.5,4.82,24,71.59,4.82,24,SE,Festuca campestris,Centaurea stoebe,Yes,Fraser et al (2011),Fraser et al (2011)a,2011,50.75579,-120.465775,0.8,0.9
+Plant biomass,,688.125,3.042090784,18,1381.7531,6.543217454,18,SE,Achillea millefolium,Solidago gigantea,Yes,Herr et al (2007),Herr et al (2007)a,2007,50.859927,4.464912,0.6,2
+Aboveground biomass,,244.38905,3.580123999,40,129.0636875,2.564227863,40,SE,Anthemis arvensis,Oxalis pes-caprae,Yes,Petsikos et al (2007),Petsikos et al (2007)a,2007,39.13333333,26.51666667,0.35,0.225
+Aboveground biomass,,500,80,4,1522,464,4,SE,Sagittaria latifolia,Phragmites australis,Yes,Rothman et al (2007),Rothman et al (2007)a,2007,41.61666667,-83.23333333,1.2,4
+Aboveground biomass,,1177,164,4,1522,464,4,SE,Typha,Phragmites australis,Yes,Rothman et al (2007),Rothman et al (2007)a,2007,41.61666667,-83.23333333,2.25,4
+Aboveground biomass,,288.2334,11.6107,3,301.6107,9.2744,3,SE,Molinia caerulea,Solidago gigantea,Yes,Scharfy et al (2010),Scharfy et al (2010)a,2010,47.4,8.5,0.9,2
+Aboveground biomass,,385.75,46.4576,3,361.987,62.698,3,SE,Carex elata,Solidago gigantea,Yes,Scharfy et al (2010),Scharfy et al (2010)b,2010,47.4,8.5,1,2
+Aboveground biomass,,541.3493,69.6792,3,570.9676,97.5452,3,SE,Carex acutiformis,Solidago gigantea,Yes,Scharfy et al (2010),Scharfy et al (2010)c,2010,47.4,8.5,1.5,2
+Aboveground biomass,,0.708925,0.156257138,20,0.480575,0.054350377,20,SE,Phragmites australis,Spartina alterniflora,Yes,Peng et al (2011),Peng et al (2011)a,2011,31.41666667,121.8333333,4,1.35
+Aboveground biomass,grams per metre squared,420.29974,123.8713822,10,593.54903,130.2401252,10,SD,Pascopyrum smithii,Bromus inermis,,Fink and Wilson (2011),Fink and Wilson (2011)a,2011,49.06833333,-106.5308056,0.6,0.685
+Aboveground biomass,Mg per ha,240.3332,37.1986,5,279.3205,50.294,5,SE,Planchonella samoensis,Falcataria moluccana,,Hughes et al. (2012),Hughes et al. (2012)a,2012,-14.3,170.6833333,40,30
+Aboveground carbon storage,kg per metre squared,0.33,0.11,5,0.12,0.04,5,SD,Agrostis halli,Avena barbata,,Koteen et al. (2011),Koteen et al. (2011)a,2011,37.862,122.524,1,0.7
+Aboveground carbon storage,kg per metre squared,0.35,0.16,5,0.12,0.04,5,SD,Festuca rubra,Avena barbata,,Koteen et al. (2011),Koteen et al. (2011)a,2011,37.862,122.524,0.525,0.7
+Aboveground carbon storage,kg per metre squared,0.42,0.08,5,0.22,0.04,5,SD,Agrostis halli,Avena barbata,,Koteen et al. (2011),Koteen et al. (2011)a,2011,37.862,122.524,1,0.7
+Aboveground carbon storage,kg per metre squared,0.37,0.13,5,0.22,0.04,5,SD,Festuca rubra,Avena barbata,,Koteen et al. (2011),Koteen et al. (2011)a,2011,37.862,122.524,0.525,0.7
+Aboveground carbon storage,kg per metre squared,0.42,0.06,5,0.22,0.03,5,SD,Agrostis halli,Avena barbata,,Koteen et al. (2011),Koteen et al. (2011)a,2011,37.862,122.524,1,0.7
+Aboveground carbon storage,kg per metre squared,0.37,0.1,5,0.22,0.03,5,SD,Festuca rubra,Avena barbata,,Koteen et al. (2011),Koteen et al. (2011)a,2011,37.862,122.524,0.525,0.7
+Aboveground carbon storage,,0.26,0.15,5,0.17,0.04,5,SD,Nassella pulchra,Brachypodium distachyon,,Koteen et al. (2011),Koteen et al. (2011)b,2011,37.931,122.673,1,
+Aboveground carbon storage,,0.26,0.1,5,0.28,0.07,5,SD,Nassella pulchra,Brachypodium distachyon,,Koteen et al. (2011),Koteen et al. (2011)b,2011,37.931,122.673,1,
+Aboveground carbon storage,,0.26,0.08,5,0.28,0.05,5,SD,Nassella pulchra,Brachypodium distachyon,,Koteen et al. (2011),Koteen et al. (2011)b,2011,37.931,122.673,1,
+Total plant biomass,,2.18,0.09,15,4.36,0.16,15,SE,Eupatorium perfoliatum,Microstegium vimineum,,Lee et al (2012),Lee et al (2012)a,2012,39.21916667,-86.54138889,1,0.7
+Aboveground biomass,kilograms per metre squared,28.9,8.3,8,14.6,3.3,4,SE,Acer rubrum,Rhamnus cathartica,,Mascaro and Schnitzer (2011),Mascaro and Schnitzer (2011)a,2011,42.762371,-88.133196,15,10
