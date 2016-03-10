@@ -8,6 +8,8 @@ Species_traits<-read.csv("Data/Species_resolved_traits.csv")
 
 Species_traits$Median_height<-ifelse(!is.na(Species_traits$Single_height),Species_traits$Single_height,(Species_traits$Upper_height+Species_traits$Lower_height)/2)
 
+write.csv(Species_traits,"Data/Species_traits_median.csv")
+
 head(Species_traits)
 
 
