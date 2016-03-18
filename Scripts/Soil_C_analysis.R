@@ -7,6 +7,13 @@ library(lme4)
 library(metafor)
 library(MuMIn)
 library(sp)
+library(plyr)
+#and functions
+Mode <- function(x) {
+  ux <- unique(x)
+  ux[which.max(tabulate(match(x, ux)))]
+}
+
 
 #read in data
 Carb<-read.csv("Data/SC_trait_climate.csv")
@@ -38,14 +45,13 @@ ggplot(Carb,aes(x=Height_RR,y=CWD,size=Diff_RR))+geom_point()
 
 #now calculate effect sizes in metafor
 Carb_ES<-escalc("ROM",m2i=EF_UI,m1i=EF_I,sd2i=SE_UI,sd1i=SE_I,n2i=SS_UI,n1i=SS_I,data=Carb)
-Site_unique<-unique(Carb_ES$Study)
+Site_unique<-unique(Carb_ES$SiteID)
 Model_AIC_summary<-NULL
-for (i in 1:1000){
-  i<-1
+for (i in 1:100){
   print(i)
   Carb_samp<-NULL
   for (j in 1:length(Site_unique)){#sample one site for each study so that no reference site is used more than once
-    Carb_sub<-subset(Carb_ES,Study==Site_unique[j])
+    Carb_sub<-subset(Carb_ES,SiteID==Site_unique[j])
     Carb_sub<-Carb_sub[sample(nrow(Carb_sub), 1), ] 
     Carb_samp<-rbind(Carb_sub,Carb_samp)
   }
@@ -78,7 +84,11 @@ for (i in 1:1000){
   Model_AIC$Rank<-seq(1,8,1) #rank models from 1-8 in terms of parsimony
   Model_AIC_summary<-rbind(Model_AIC,Model_AIC_summary)
 }
-  
+Model_AIC_summary$Rank1<-ifelse(Model_AIC_summary$Rank==1,1,0)
+#summarise the boostrapping routine by giving median values for model statistics - log liklihood, AICc delta AICc, R squared
+Model_sel_boot<-ddply(Model_AIC_summary,.(Vars),summarise,Modal_rank=Mode(Rank),Prop_rank=sum(Rank1)/100,log_liklihood=median(logLik),AICc_med=median(AICc),
+                      delta_med=median(delta),R2_med=median(R2))
+
 
 #get r squared value
 
