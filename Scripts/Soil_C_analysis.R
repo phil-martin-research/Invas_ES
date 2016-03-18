@@ -38,17 +38,47 @@ ggplot(Carb,aes(x=Height_RR,y=CWD,size=Diff_RR))+geom_point()
 
 #now calculate effect sizes in metafor
 Carb_ES<-escalc("ROM",m2i=EF_UI,m1i=EF_I,sd2i=SE_UI,sd1i=SE_I,n2i=SS_UI,n1i=SS_I,data=Carb)
-
-
-M0<-rma.mv(yi~1,vi,random=list(~1|Study),data=Carb_ES,method="ML")
-M1<-rma.mv(yi~Height_RR,vi,random=list(~1|Study),data=Carb_ES,method="ML")
-M2<-rma.mv(yi~CWD2,vi,random=list(~1|Study),data=Carb_ES,method="ML")
-M3<-rma.mv(yi~Precip,vi,random=list(~1|Study),data=Carb_ES,method="ML")
-M4<-rma.mv(yi~Temp,vi,random=list(~1|Study),data=Carb_ES,method="ML")
-M5<-rma.mv(yi~Height_RR*CWD2,vi,random=list(~1|Study),data=Carb_ES,method="ML")
-M6<-rma.mv(yi~Height_RR*Precip,vi,random=list(~1|Study),data=Carb_ES,method="ML")
-M7<-rma.mv(yi~Height_RR*Temp,vi,random=list(~1|Study),data=Carb_ES,method="ML")
-AICc(M0,M1,M2,M3,M4,M5,M6,M7)
+Site_unique<-unique(Carb_ES$Study)
+Model_AIC_summary<-NULL
+for (i in 1:1000){
+  i<-1
+  print(i)
+  Carb_samp<-NULL
+  for (j in 1:length(Site_unique)){#sample one site for each study so that no reference site is used more than once
+    Carb_sub<-subset(Carb_ES,Study==Site_unique[j])
+    Carb_sub<-Carb_sub[sample(nrow(Carb_sub), 1), ] 
+    Carb_samp<-rbind(Carb_sub,Carb_samp)
+  }
+  Model0<-rma.mv(yi~1,vi,random=list(~1|Study),data=Carb_samp,method="ML")
+  Model1<-rma.mv(yi~Height_RR,vi,random=list(~1|Study),data=Carb_samp,method="ML")
+  Model2<-rma.mv(yi~CWD2,vi,random=list(~1|Study),data=Carb_samp,method="ML")
+  Model3<-rma.mv(yi~Precip,vi,random=list(~1|Study),data=Carb_samp,method="ML")
+  Model4<-rma.mv(yi~Temp,vi,random=list(~1|Study),data=Carb_samp,method="ML")
+  Model5<-rma.mv(yi~Height_RR*CWD2,vi,random=list(~1|Study),data=Carb_samp,method="ML")
+  Model6<-rma.mv(yi~Height_RR*Precip,vi,random=list(~1|Study),data=Carb_samp,method="ML")
+  Model7<-rma.mv(yi~Height_RR*Temp,vi,random=list(~1|Study),data=Carb_samp,method="ML")
+  Model_AIC<-data.frame(AICc=c(Model0$fit.stats$ML[5],Model1$fit.stats$ML[5],Model2$fit.stats$ML[5],#produce AICc values for the models
+                               Model3$fit.stats$ML[5],Model4$fit.stats$ML[5],Model5$fit.stats$ML[5],
+                               Model6$fit.stats$ML[5],Model7$fit.stats$ML[5]))
+  Model_AIC$Vars<-c("Null","Height_RR","CWD","Precip","Temp","Height*CWD", #details of model variables
+                    "Height*Precip","Height*Temp")
+  Model_AIC$logLik<-c(Model0$fit.stats$ML[1],Model1$fit.stats$ML[1],Model2$fit.stats$ML[1],#put logLiklihood in the table
+                      Model3$fit.stats$ML[1],Model4$fit.stats$ML[1],Model5$fit.stats$ML[1],
+                      Model6$fit.stats$ML[1],Model7$fit.stats$ML[1])
+  Null_dev<-deviance(Model0)
+  Dev<-c(deviance(Model0),deviance(Model1),deviance(Model2),deviance(Model3),deviance(Model4),deviance(Model5),#calculate deviance of models
+         deviance(Model6),deviance(Model7))
+  Model_AIC$R2<-1-(Dev/Null_dev) #calculate pseudo-r squared using model deviance
+  Model_AIC$R2<-ifelse(Model_AIC$R2<0,0,Model_AIC$R2)
+  Model_AIC<-Model_AIC[order(Model_AIC$AICc),] #reorder from lowest to highest
+  Model_AIC$delta<-Model_AIC$AICc-Model_AIC$AICc[1]#calculate AICc delta
+  Model_AIC$rel_lik<-exp((Model_AIC$AICc[1]-Model_AIC$AICc)/2)#calculate the relative likelihood of model
+  Model_AIC$weight<-Model_AIC$rel_lik/(sum(Model_AIC$rel_lik))
+  Model_AIC$Run<-i
+  Model_AIC$Rank<-seq(1,8,1) #rank models from 1-8 in terms of parsimony
+  Model_AIC_summary<-rbind(Model_AIC,Model_AIC_summary)
+}
+  
 
 #get r squared value
 
