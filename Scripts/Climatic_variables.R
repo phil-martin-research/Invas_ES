@@ -23,12 +23,11 @@ Prec<-raster("Data/Climate/Bioclim/bio12.bil")
 CWD<-raster("Data/Climate/CWD/CWD.bil")
 
 #now extract data for each of these layers
-loc$Temp<-extract(Temp,loc2,method="bilinear")
-loc$Precip<-extract(Prec,loc2,method="bilinear")
-loc$CWD<-extract(CWD,loc2,method="bilinear")
+loc$Temp<-extract(Temp,loc2,method="bilinear",buffer=100000,fun=mean,na.rm=T)
+loc$Precip<-extract(Prec,loc2,method="bilinear",buffer=100000,fun=mean,na.rm=T)
+loc$CWD<-extract(CWD,loc2,method="bilinear",buffer=100000,fun=mean,na.rm=T)
 
-
-head(loc)
+is.na(loc$CWD)
 
 ggplot(loc,aes(x=Temp/10))+geom_histogram()+facet_wrap(~EF_type)
 ggplot(loc,aes(x=Precip))+geom_histogram()+facet_wrap(~EF_type)
