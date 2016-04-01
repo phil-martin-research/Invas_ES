@@ -8,6 +8,12 @@ library(metafor)
 library(MuMIn)
 library(sp)
 
+#and functions
+Mode <- function(x) {
+  ux <- unique(x)
+  ux[which.max(tabulate(match(x, ux)))]
+}
+
 #read in data
 AGB<-read.csv("Data/AGB_trait_climate.csv")
 AGB<-AGB[complete.cases(AGB),]
@@ -36,16 +42,45 @@ ggplot(AGB,aes(x=Temp/10,y=Diff_RR))+geom_point()
 #now calculate effect sizes in metafor
 AGB2<-subset(AGB,!is.na(Height_RR)&Terr_aqu=="Terrestrial")
 AGB_ES<-escalc("ROM",m2i=EF_UI,m1i=EF_I,sd2i=SE_UI,sd1i=SE_I,n2i=SS_UI,n1i=SS_I,data=AGB2)
+Site_unique<-unique(AGB_ES$SiteID)
+Model_AIC_summary<-NULL
+for (i in 1:10000){
+  print(i)
+  AGB_samp<-NULL
+  for (j in 1:length(Site_unique)){#sample one site for each study so that no reference site is used more than once
+    AGB_sub<-subset(AGB_ES,SiteID==Site_unique[j])
+    AGB_sub<-AGB_sub[sample(nrow(AGB_sub), 1), ] 
+    AGB_samp<-rbind(AGB_sub,AGB_samp)
+  }
+  Model0<-rma.mv(yi~1,vi,random=list(~1|Study),data=AGB_ES,method="ML")
+  Model1<-rma.mv(yi~Height_RR,vi,random=list(~1|Study),data=AGB_ES,method="ML")
+  Model2<-rma.mv(yi~CWD2,vi,random=list(~1|Study),data=AGB_ES,method="ML")
+  Model3<-rma.mv(yi~Height_RR+CWD2,vi,random=list(~1|Study),data=AGB_ES,method="ML")
+  Model4<-rma.mv(yi~Height_RR*CWD2,vi,random=list(~1|Study),data=AGB_ES,method="ML")
+  Model_AIC<-data.frame(AICc=c(Model0$fit.stats$ML[5],Model1$fit.stats$ML[5],Model2$fit.stats$ML[5],#produce AICc values for the models
+                               Model3$fit.stats$ML[5],Model4$fit.stats$ML[5]))
+  Model_AIC$Vars<-c("Null","Height","CWD","Height+CWD", #details of model variables
+                    "Height*CWD")
+  Model_AIC$logLik<-c(Model0$fit.stats$ML[1],Model1$fit.stats$ML[1],Model2$fit.stats$ML[1],#put logLiklihood in the table
+                      Model3$fit.stats$ML[1],Model4$fit.stats$ML[1])
+  Null_dev<-deviance(Model0)
+  Dev<-c(deviance(Model0),deviance(Model1),deviance(Model2),deviance(Model3),deviance(Model4))#calculate deviance of models
+  Model_AIC$R2<-round(1-(Dev/Null_dev),2) #calculate pseudo-r squared using model deviance
+  Model_AIC$R2<-ifelse(Model_AIC$R2<0,0,Model_AIC$R2)
+  Model_AIC<-Model_AIC[order(Model_AIC$AICc),] #reorder from lowest to highest
+  Model_AIC$delta<-Model_AIC$AICc-Model_AIC$AICc[1]#calculate AICc delta
+  Model_AIC$rel_lik<-round(exp((Model_AIC$AICc[1]-Model_AIC$AICc)/2),2)#calculate the relative likelihood of model
+  Model_AIC$weight<-round(Model_AIC$rel_lik/(sum(Model_AIC$rel_lik)),2)
+  Model_AIC$Run<-i
+  Model_AIC$Rank<-seq(1,5,1) #rank models from 1-8 in terms of parsimony
+  Model_AIC_summary<-rbind(Model_AIC,Model_AIC_summary)
+}
 
+Model_AIC_summary$Rank1<-ifelse(Model_AIC_summary$Rank==1,1,0)
+#summarise the boostrapping routine by giving median values for model statistics - log liklihood, AICc delta AICc, R squared
+Model_sel_boot<-ddply(Model_AIC_summary,.(Vars),summarise,Modal_rank=Mode(Rank),Prop_rank=sum(Rank1)/100,log_liklihood=median(logLik),AICc_med=median(AICc),
+                      delta_med=median(delta),R2_med=median(R2))
 
-M0<-rma.mv(yi~1,vi,random=list(~1|Study),data=AGB_ES,method="ML")
-M1<-rma.mv(yi~Height_RR,vi,random=list(~1|Study),data=AGB_ES,method="ML")
-M2<-rma.mv(yi~CWD2,vi,random=list(~1|Study),data=AGB_ES,method="ML")
-M3<-rma.mv(yi~Height_RR+CWD2,vi,random=list(~1|Study),data=AGB_ES,method="ML")
-M4<-rma.mv(yi~Height_RR*CWD2,vi,random=list(~1|Study),data=AGB_ES,method="ML")
-AICc(M0,M1,M2,M3,M4)
-
-summary(M1)
 
 #get r squared value
 
