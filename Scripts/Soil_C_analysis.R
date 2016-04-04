@@ -47,7 +47,7 @@ ggplot(Carb,aes(x=Height_RR,y=CWD,size=Diff_RR))+geom_point()
 Carb_ES<-escalc("ROM",m2i=EF_UI,m1i=EF_I,sd2i=SE_UI,sd1i=SE_I,n2i=SS_UI,n1i=SS_I,data=Carb)
 Site_unique<-unique(Carb_ES$SiteID)
 Model_AIC_summary<-NULL
-for (i in 1:100){
+for (i in 1:100) {
   print(i)
   Carb_samp<-NULL
   for (j in 1:length(Site_unique)){#sample one site for each study so that no reference site is used more than once
@@ -58,22 +58,14 @@ for (i in 1:100){
   Model0<-rma.mv(yi~1,vi,random=list(~1|Study),data=Carb_samp,method="ML")
   Model1<-rma.mv(yi~Height_RR,vi,random=list(~1|Study),data=Carb_samp,method="ML")
   Model2<-rma.mv(yi~CWD2,vi,random=list(~1|Study),data=Carb_samp,method="ML")
-  Model3<-rma.mv(yi~Precip,vi,random=list(~1|Study),data=Carb_samp,method="ML")
-  Model4<-rma.mv(yi~Temp,vi,random=list(~1|Study),data=Carb_samp,method="ML")
-  Model5<-rma.mv(yi~Height_RR*CWD2,vi,random=list(~1|Study),data=Carb_samp,method="ML")
-  Model6<-rma.mv(yi~Height_RR*Precip,vi,random=list(~1|Study),data=Carb_samp,method="ML")
-  Model7<-rma.mv(yi~Height_RR*Temp,vi,random=list(~1|Study),data=Carb_samp,method="ML")
+  Model3<-rma.mv(yi~Height_RR*CWD2,vi,random=list(~1|Study),data=Carb_samp,method="ML")
   Model_AIC<-data.frame(AICc=c(Model0$fit.stats$ML[5],Model1$fit.stats$ML[5],Model2$fit.stats$ML[5],#produce AICc values for the models
-                               Model3$fit.stats$ML[5],Model4$fit.stats$ML[5],Model5$fit.stats$ML[5],
-                               Model6$fit.stats$ML[5],Model7$fit.stats$ML[5]))
-  Model_AIC$Vars<-c("Null","Height_RR","CWD","Precip","Temp","Height*CWD", #details of model variables
-                    "Height*Precip","Height*Temp")
+                               Model3$fit.stats$ML[5]))
+  Model_AIC$Vars<-c("Null","Height_RR","CWD","Height*CWD") #details of model variables
   Model_AIC$logLik<-c(Model0$fit.stats$ML[1],Model1$fit.stats$ML[1],Model2$fit.stats$ML[1],#put logLiklihood in the table
-                      Model3$fit.stats$ML[1],Model4$fit.stats$ML[1],Model5$fit.stats$ML[1],
-                      Model6$fit.stats$ML[1],Model7$fit.stats$ML[1])
+                      Model3$fit.stats$ML[1])
   Null_dev<-deviance(Model0)
-  Dev<-c(deviance(Model0),deviance(Model1),deviance(Model2),deviance(Model3),deviance(Model4),deviance(Model5),#calculate deviance of models
-         deviance(Model6),deviance(Model7))
+  Dev<-c(deviance(Model0),deviance(Model1),deviance(Model2),deviance(Model3))
   Model_AIC$R2<-1-(Dev/Null_dev) #calculate pseudo-r squared using model deviance
   Model_AIC$R2<-ifelse(Model_AIC$R2<0,0,Model_AIC$R2)
   Model_AIC<-Model_AIC[order(Model_AIC$AICc),] #reorder from lowest to highest
@@ -81,7 +73,7 @@ for (i in 1:100){
   Model_AIC$rel_lik<-exp((Model_AIC$AICc[1]-Model_AIC$AICc)/2)#calculate the relative likelihood of model
   Model_AIC$weight<-Model_AIC$rel_lik/(sum(Model_AIC$rel_lik))
   Model_AIC$Run<-i
-  Model_AIC$Rank<-seq(1,8,1) #rank models from 1-8 in terms of parsimony
+  Model_AIC$Rank<-seq(1,4,1) #rank models from 1-8 in terms of parsimony
   Model_AIC_summary<-rbind(Model_AIC,Model_AIC_summary)
 }
 Model_AIC_summary$Rank1<-ifelse(Model_AIC_summary$Rank==1,1,0)
@@ -90,9 +82,34 @@ Model_sel_boot<-ddply(Model_AIC_summary,.(Vars),summarise,Modal_rank=Mode(Rank),
                       delta_med=median(delta),R2_med=median(R2))
 
 
-#get r squared value
+#now boostrap the top model to get parameter estimates
+Site_unique<-unique(Carb_ES$SiteID)
+Param_boot<-NULL
+for (i in 1:1000){
+  print(i)
+  Carb_samp<-NULL
+  for (j in 1:length(Site_unique)){#use same routine as previously to subsample dataset avoiding pseudo-replication
+    Carb_sub<-subset(Carb_ES,SiteID==Site_unique[j])
+    Carb_sub<-Carb_sub[sample(nrow(Carb_sub), 1), ]
+    Carb_samp<-rbind(Carb_sub,Carb_samp)
+  }
+  Model4<-rma.mv(yi~Height_RR*CWD2,vi,random=list(~1|Study),data=Carb_samp,method="REML")
+  Param_vals<-data.frame(Parameter=c("Intercept","Height","CWD","Height*CWD"),
+                         estimate=round(coef(summary(Model4))[1],2),
+                         se=round(coef(summary(Model4))[2],2),
+                         pval=round(coef(summary(Model4))[4],3),
+                         ci_lb=round(coef(summary(Model4))[5],2),
+                         ci_ub=round(coef(summary(Model4))[6],2))
+  Param_boot<-rbind(Param_vals,Param_boot)
+}
 
-1-(deviance(M5)/deviance(M0))
+#produce summary of parameter estimates
+Param_boot_sum<-ddply(Param_boot,.(Parameter),summarise,coef_estimate=median(estimate),lower=median(ci.lb),
+                      upper=median(ci.ub),med_pval=median(pval),se=median(se))
+
+#write this table of parameter estimates
+write.table(Param_boot_sum,file="Tables/Soil_C_parameter_estimates.csv",sep=",")
+
 
 #create new dataset for predictions
 new.data<-expand.grid(Height_RR=seq(min(Carb_ES$Height_RR),max(Carb_ES$Height_RR),length.out = 1000),
@@ -115,11 +132,9 @@ new.data$inp <- over(new.data.poly, poly)
 new.data <- new.data[complete.cases(new.data),]
 
 # Calculate yi as you did:
-new.data$yi<-(new.data$Height_RR*0.1052) + 0.1943 + (1.2867*new.data$CWD2) + ((new.data$CWD2*new.data$Height_RR)*0.0341)
+new.data$yi<-(new.data$Height_RR*0.10) + 0.20 + (1.29*new.data$CWD2) + ((new.data$CWD2*new.data$Height_RR)*0.03)
 
 # Plot
-sd(Carb$CWD)
-mean(Carb$CWD)
 
 theme_set(theme_bw(base_size=12))
 P1<-ggplot(new.data, aes(x=Height_RR,y=(CWD2*374.6319)+-551.739,fill=yi)) +
