@@ -45,5 +45,5 @@ Moist<-subset(loc,EF_type=="Soil moisture")
 write.csv(Moist,"Data/Moisture_trait_climate.csv",row.names = FALSE)
 
 Water<-subset(loc,EF_type=="Water supply")
-write.csv(Water,"Data/Moisture_trait_climate.csv",row.names = FALSE)
+write.csv(Water,"Data/Water_trait_climate.csv",row.names = FALSE)
 
