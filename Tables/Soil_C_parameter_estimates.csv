@@ -1,0 +1,5 @@
+"Parameter","coef_estimate","lower","upper","med_pval","se"
+"1","CWD",1.29,1.17,1.4,0,0.06
+"2","Height",0.1,0.09,0.12,0,0.01
+"3","Height*CWD",0.03,0.02,0.04,0,0.01
+"4","Intercept",0.2,-0.3,0.69,0.439,0.25
