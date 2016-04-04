@@ -30,21 +30,13 @@ AGB$SE_UI<-ifelse(AGB$Var=="SE",AGB$SE_UI/sqrt(AGB$SS_UI),AGB$SE_UI)
 AGB$SE_I<-ifelse(AGB$Var=="SE",AGB$SE_I/sqrt(AGB$SS_I),AGB$SE_I)
 
 
-#do some data exploration
-ggplot(AGB,aes(x=Height_diff,y=Diff_RR))+geom_point()+geom_smooth()
-ggplot(AGB,aes(x=Height_RR,y=Diff_RR,label=Study))+geom_point()+geom_smooth(method="lm")
-ggplot(AGB,aes(x=Height_prop,y=exp(Diff_RR)-1))+geom_point()
-ggplot(AGB,aes(x=CWD,y=Diff_RR))+geom_point()
-ggplot(AGB,aes(x=CWD2,y=Diff_RR))+geom_point()
-ggplot(AGB,aes(x=Precip,y=Diff_RR))+geom_point()
-ggplot(AGB,aes(x=Temp/10,y=Diff_RR))+geom_point()
-
 #now calculate effect sizes in metafor
 AGB2<-subset(AGB,!is.na(Height_RR)&Terr_aqu=="Terrestrial")
 AGB_ES<-escalc("ROM",m2i=EF_UI,m1i=EF_I,sd2i=SE_UI,sd1i=SE_I,n2i=SS_UI,n1i=SS_I,data=AGB2)
 Site_unique<-unique(AGB_ES$SiteID)
+
 Model_AIC_summary<-NULL
-for (i in 1:10000){
+for (i in 1:100){
   print(i)
   AGB_samp<-NULL
   for (j in 1:length(Site_unique)){#sample one site for each study so that no reference site is used more than once
@@ -52,11 +44,11 @@ for (i in 1:10000){
     AGB_sub<-AGB_sub[sample(nrow(AGB_sub), 1), ] 
     AGB_samp<-rbind(AGB_sub,AGB_samp)
   }
-  Model0<-rma.mv(yi~1,vi,random=list(~1|Study),data=AGB_ES,method="ML")
-  Model1<-rma.mv(yi~Height_RR,vi,random=list(~1|Study),data=AGB_ES,method="ML")
-  Model2<-rma.mv(yi~CWD2,vi,random=list(~1|Study),data=AGB_ES,method="ML")
-  Model3<-rma.mv(yi~Height_RR+CWD2,vi,random=list(~1|Study),data=AGB_ES,method="ML")
-  Model4<-rma.mv(yi~Height_RR*CWD2,vi,random=list(~1|Study),data=AGB_ES,method="ML")
+  Model0<-rma.mv(yi~1,vi,random=list(~1|Study),data=AGB_samp,method="ML")
+  Model1<-rma.mv(yi~Height_RR,vi,random=list(~1|Study),data=AGB_samp,method="ML")
+  Model2<-rma.mv(yi~CWD2,vi,random=list(~1|Study),data=AGB_samp,method="ML")
+  Model3<-rma.mv(yi~Height_RR+CWD2,vi,random=list(~1|Study),data=AGB_samp,method="ML")
+  Model4<-rma.mv(yi~Height_RR*CWD2,vi,random=list(~1|Study),data=AGB_samp,method="ML")
   Model_AIC<-data.frame(AICc=c(Model0$fit.stats$ML[5],Model1$fit.stats$ML[5],Model2$fit.stats$ML[5],#produce AICc values for the models
                                Model3$fit.stats$ML[5],Model4$fit.stats$ML[5]))
   Model_AIC$Vars<-c("Null","Height","CWD","Height+CWD", #details of model variables
@@ -82,13 +74,43 @@ Model_sel_boot<-ddply(Model_AIC_summary,.(Vars),summarise,Modal_rank=Mode(Rank),
                       delta_med=median(delta),R2_med=median(R2))
 
 
-#get r squared value
+#now boostrap the top model to get parameter estimates
+Site_unique<-unique(AGB_ES$SiteID)
+Param_boot<-NULL
+for (i in 1:1000){
+  print(i)
+  AGB_samp<-NULL
+  for (j in 1:length(Site_unique)){#use same routine as previously to subsample dataset avoiding pseudo-replication
+    AGB_sub<-subset(AGB_ES,SiteID==Site_unique[j])
+    AGB_sub<-AGB_sub[sample(nrow(AGB_sub), 1), ]
+    AGB_samp<-rbind(AGB_sub,AGB_samp)
+  }
+  Model4<-rma.mv(yi~Height_RR*CWD2,vi,random=list(~1|Study),data=AGB_samp,method="REML")
+  coef(summary(Model4))
+  Param_vals<-data.frame(Parameter=c("Intercept","Height","CWD","Height*CWD"),
+                         estimate=round(coef(summary(Model4))[1],2),
+                         se=round(coef(summary(Model4))[2],2),
+                         pval=round(coef(summary(Model4))[4],3),
+                         ci_lb=round(coef(summary(Model4))[5],2),
+                         ci_ub=round(coef(summary(Model4))[6],2))
+  Param_boot<-rbind(Param_vals,Param_boot)
+}
 
-1-(deviance(M4)/deviance(M0))
+#produce summary of parameter estimates
+Param_boot_sum<-ddply(Param_boot,.(Parameter),summarise,coef_estimate=median(estimate),lower=median(ci.lb),
+                      upper=median(ci.ub),med_pval=median(pval),se=median(se))
 
-#cerate new dataset for predictions
-new.data<-expand.grid(Height_RR=seq(min(AGB_ES$Height_RR),max(AGB_ES$Height_RR),length.out = 100),
-                      CWD2=seq(min(AGB_ES$CWD2,na.rm = T),max(AGB_ES$CWD2,na.rm = T),length.out = 100))
+#write this table of parameter estimates
+write.table(Param_boot_sum,file="Tables/AGB_parameter_estimates.csv",sep=",")
+
+##############################################
+#produce figures for AGB######################
+##############################################
+
+
+#create new dataset for predictions
+new.data<-expand.grid(Height_RR=seq(min(AGB_ES$Height_RR),max(AGB_ES$Height_RR),length.out = 1000),
+                      CWD2=seq(min(AGB_ES$CWD2,na.rm = T),max(AGB_ES$CWD2,na.rm = T),length.out = 1000))
 #create new dataframe to produce convex hull
 AGB3<-AGB2[,c("Height_RR","CWD2")]
 
@@ -110,11 +132,11 @@ new.data <- new.data[complete.cases(new.data),]
 
 # Calculate yi as you did:
 
-new.data$yi<-(new.data$Height_RR*0.7048) + 0.5151 + (0.4241*new.data$CWD2) + ((new.data$CWD2*new.data$Height_RR)*-0.1593)
+new.data$yi<-(new.data$Height_RR*0.88) + 0.45 + (0.*new.data$CWD2) + ((new.data$CWD2*new.data$Height_RR)*-0.16)
 
 # Plot
 theme_set(theme_bw(base_size=12))
-P1<-ggplot(new.data, aes(x=Height_RR,y=CWD2,fill=yi)) +
+P1<-ggplot(new.data, aes(x=Height_RR,y=(CWD2*sd(AGB$CWD))+mean(AGB$CWD),fill=yi)) +
   geom_raster() + 
   scale_fill_gradient2("Change in community biomass \n(log response ratio)",low="blue",mid="light grey",high="red")+geom_point(shape=1,size=2,data=AGB2,fill=NA)
 P2<-P1+theme(panel.border = element_rect(size=1.5,colour="black",fill=NA))
