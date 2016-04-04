@@ -86,7 +86,6 @@ for (i in 1:1000){
     AGB_samp<-rbind(AGB_sub,AGB_samp)
   }
   Model4<-rma.mv(yi~Height_RR*CWD2,vi,random=list(~1|Study),data=AGB_samp,method="REML")
-  coef(summary(Model4))
   Param_vals<-data.frame(Parameter=c("Intercept","Height","CWD","Height*CWD"),
                          estimate=round(coef(summary(Model4))[1],2),
                          se=round(coef(summary(Model4))[2],2),
