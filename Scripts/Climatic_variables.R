@@ -23,9 +23,9 @@ Prec<-raster("Data/Climate/Bioclim/bio12.bil")
 CWD<-raster("Data/Climate/CWD/CWD.bil")
 
 #now extract data for each of these layers
-loc$Temp<-extract(Temp,loc2,method="bilinear",buffer=10000,fun=mean,na.rm=T)
-loc$Precip<-extract(Prec,loc2,method="bilinear",buffer=10000,fun=mean,na.rm=T)
-loc$CWD<-extract(CWD,loc2,method="bilinear",buffer=10000,fun=mean,na.rm=T)
+loc$Temp<-extract(Temp,loc2,method="bilinear",buffer=1000,fun=mean,na.rm=T)
+loc$Precip<-extract(Prec,loc2,method="bilinear",buffer=1000,fun=mean,na.rm=T)
+loc$CWD<-extract(CWD,loc2,method="bilinear",buffer=1000,fun=mean,na.rm=T)
 
 is.na(loc$CWD)
 
@@ -39,5 +39,11 @@ AGB<-subset(loc,EF_type=="Aboveground biomass")
 write.csv(AGB,"Data/AGB_trait_climate.csv",row.names = FALSE)
 
 Nit<-subset(loc,EF_type=="Soil nitrogen")
-write.csv(AGB,"Data/Nitrogen_trait_climate.csv",row.names = FALSE)
+write.csv(Nit,"Data/Nitrogen_trait_climate.csv",row.names = FALSE)
+
+Moist<-subset(loc,EF_type=="Soil moisture")
+write.csv(Moist,"Data/Moisture_trait_climate.csv",row.names = FALSE)
+
+Water<-subset(loc,EF_type=="Water supply")
+write.csv(Water,"Data/Moisture_trait_climate.csv",row.names = FALSE)
 
