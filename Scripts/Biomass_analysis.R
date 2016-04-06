@@ -7,6 +7,7 @@ library(lme4)
 library(metafor)
 library(MuMIn)
 library(sp)
+library(ncf)
 
 #and functions
 Mode <- function(x) {
@@ -34,6 +35,21 @@ AGB$SE_I<-ifelse(AGB$Var=="SE",AGB$SE_I/sqrt(AGB$SS_I),AGB$SE_I)
 AGB2<-subset(AGB,!is.na(Height_RR)&Terr_aqu=="Terrestrial")
 AGB_ES<-escalc("ROM",m2i=EF_UI,m1i=EF_I,sd2i=SE_UI,sd1i=SE_I,n2i=SS_UI,n1i=SS_I,data=AGB2)
 Site_unique<-unique(AGB_ES$SiteID)
+head(AGB_ES)
+
+#produce a correlogram to look at spatial autocorrelation of effect sizes
+
+AGB.cor<-spline.correlog(AGB_ES$Latitude, AGB_ES$Longitude, AGB_ES$yi, latlon=T,resamp=1000,quiet=T)
+AGB.cor2<-data.frame(Dist=AGB.cor$boot$boot.summary$predicted$x[1,],Cor=AGB.cor$boot$boot.summary$predicted$y[6,],UCI=AGB.cor$boot$boot.summary$predicted$y[2,],LCI=AGB.cor$boot$boot.summary$predicted$y[10,])
+theme_set(theme_bw(base_size=12))
+Moran_plot1<-ggplot(AGB.cor2,aes(x=Dist,y=Cor,ymax=LCI,ymin=UCI))+geom_ribbon(alpha=0.2)+geom_line(size=0.5,colour="black")
+Moran_plot2<-Moran_plot1+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),panel.border = element_rect(size=1.5,colour="black",fill=NA))+ theme(legend.position="none")
+Moran_plot2+geom_hline(y=0,lty=2)+xlab("Distance between sites (km)")+ylab("Moran's I correlation")+scale_size_continuous(range = c(1,3))
+ggsave("Figures/AGB_correl.pdf",height=6,width=8,units="in",dpi=300)
+
+
+?spline.correlog
+
 
 Model_AIC_summary<-NULL
 for (i in 1:100){
@@ -77,6 +93,7 @@ Model_sel_boot<-ddply(Model_AIC_summary,.(Vars),summarise,Modal_rank=Mode(Rank),
 #now boostrap the top model to get parameter estimates
 Site_unique<-unique(AGB_ES$SiteID)
 Param_boot<-NULL
+Resid_corr<-NULL
 for (i in 1:1000){
   print(i)
   AGB_samp<-NULL
@@ -93,14 +110,31 @@ for (i in 1:1000){
                          ci_lb=round(coef(summary(Model4))[5],2),
                          ci_ub=round(coef(summary(Model4))[6],2))
   Param_boot<-rbind(Param_vals,Param_boot)
+  AGB.cor<-spline.correlog(AGB_samp$Latitude, AGB_samp$Longitude, resid(Model4), latlon=T,resamp=1000,quiet=T)
+  AGB.cor2<-data.frame(Dist=AGB.cor$boot$boot.summary$predicted$x[1,],Cor=AGB.cor$boot$boot.summary$predicted$y[6,],UCI=AGB.cor$boot$boot.summary$predicted$y[2,],LCI=AGB.cor$boot$boot.summary$predicted$y[10,])
+  Resid_corr<-rbind(Resid_corr,AGB.cor2)
 }
 
 #produce summary of parameter estimates
 Param_boot_sum<-ddply(Param_boot,.(Parameter),summarise,coef_estimate=median(estimate),lower=median(ci.lb),
                       upper=median(ci.ub),med_pval=median(pval),se=median(se))
 
+
+
 #write this table of parameter estimates
 write.table(Param_boot_sum,file="Tables/AGB_parameter_estimates.csv",sep=",")
+
+#produce summary of analysis of spatial auto-correlation
+head(Resid_corr)
+SA_boot_sum<-ddply(Resid_corr,.(Dist),summarise,Cor_mean=mean(Cor),lower=mean(LCI),
+                      upper=mean(UCI))
+
+theme_set(theme_bw(base_size=12))
+Moran_plot1<-ggplot(SA_boot_sum,aes(x=Dist,y=Cor_mean,ymax=upper,ymin=lower))+geom_ribbon(alpha=0.2)+geom_line(size=0.5,colour="black")
+Moran_plot2<-Moran_plot1+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),panel.border = element_rect(size=1.5,colour="black",fill=NA))+ theme(legend.position="none")
+Moran_plot2+geom_hline(y=0,lty=2)+xlab("Distance between sites (km)")+ylab("Moran's I correlation")+scale_size_continuous(range = c(1,3))
+ggsave("Figures/AGB_resid_correl.pdf",height=6,width=8,units="in",dpi=300)
+
 
 ##############################################
 #produce figures for AGB######################
