@@ -27,12 +27,8 @@ loc$Temp<-extract(Temp,loc2,method="bilinear",buffer=1000,fun=mean,na.rm=T)
 loc$Precip<-extract(Prec,loc2,method="bilinear",buffer=1000,fun=mean,na.rm=T)
 loc$CWD<-extract(CWD,loc2,method="bilinear",buffer=1000,fun=mean,na.rm=T)
 
-is.na(loc$CWD)
 
-ggplot(loc,aes(x=Temp/10))+geom_histogram()+facet_wrap(~EF_type)
-ggplot(loc,aes(x=Precip))+geom_histogram()+facet_wrap(~EF_type)
-ggplot(loc,aes(x=CWD))+geom_histogram()+facet_wrap(~EF_type)
-
+#write data to file, using one master and 4 different .csvs for AGB, soil carbon, moisture and water.
 write.csv(loc,"Data/Inv_trait_climate.csv",row.names = FALSE)
 
 AGB<-subset(loc,EF_type=="Aboveground biomass")
