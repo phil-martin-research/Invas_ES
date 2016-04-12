@@ -1,0 +1,517 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 744.09448819 1052.3622047"
+   id="svg4188"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="Conceptual_figure.svg"
+   inkscape:export-filename="C:\Users\Phil\Documents\Work\Active_projects\1. CEH_short_contract\Invas_ES\Figures\Conceptual_figure_1.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <defs
+     id="defs4190">
+    <marker
+       inkscape:stockid="TriangleOutM"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="TriangleOutM"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path4465"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.4)" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleOutL"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="TriangleOutL"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         id="path4462"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.8)" />
+    </marker>
+    <marker
+       inkscape:isstock="true"
+       style="overflow:visible;"
+       id="marker6019"
+       refX="0.0"
+       refY="0.0"
+       orient="auto"
+       inkscape:stockid="Arrow1Lend">
+      <path
+         transform="scale(0.8) rotate(180) translate(12.5,0)"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         id="path6021" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lend"
+       style="overflow:visible;"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         id="path4323"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
+         transform="scale(0.8) rotate(180) translate(12.5,0)" />
+    </marker>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath4840">
+      <rect
+         style="fill:none;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         id="rect4842"
+         width="770"
+         height="290"
+         x="-68.571419"
+         y="695.21936" />
+    </clipPath>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend-8"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4323-6"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.7"
+     inkscape:cx="349.0314"
+     inkscape:cy="596.3587"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:snap-object-midpoints="true"
+     inkscape:snap-bbox="true"
+     showguides="true"
+     inkscape:window-width="1536"
+     inkscape:window-height="801"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata4193">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#ffffff;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
+       id="rect4171-4"
+       width="368.77856"
+       height="319.49286"
+       x="6.6821413"
+       y="16.901487" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="27.635616"
+       y="41.958397"
+       id="text4946"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4948"
+         x="27.635616"
+         y="41.958397"
+         style="font-size:15px;opacity:0">(a)</tspan></text>
+    <g
+       id="g4288">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4256"
+         d="m 105.86968,311.4976 0.75955,-21.02669"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.37075973;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <ellipse
+         ry="5.7005682"
+         rx="5.5541906"
+         cy="286.6394"
+         cx="106.58176"
+         id="path4258"
+         style="fill:#00ff00;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path4256-0"
+         d="m 189.9649,312.536 1.19167,-32.98918"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.58169228;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <ellipse
+         ry="8.9437342"
+         rx="8.7140789"
+         cy="273.53546"
+         cx="191.08209"
+         id="path4258-3"
+         style="fill:#00ff00;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path4256-07"
+         d="m 296.86837,315.05523 1.90273,-52.67369"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.92878556;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <ellipse
+         ry="14.280422"
+         rx="13.913733"
+         cy="252.78323"
+         cx="298.65219"
+         id="path4258-1"
+         style="fill:#00ff00;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path4256-5"
+         d="m 128.82031,313.06767 1.19168,-32.98919"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.58169228;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <ellipse
+         ry="8.9437342"
+         rx="8.7140789"
+         cy="274.06714"
+         cx="129.9375"
+         id="path4258-0"
+         style="fill:#007000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path4256-8"
+         d="m 212.92676,311.91395 1.19167,-32.98918"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.58169228;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <ellipse
+         ry="8.9437342"
+         rx="8.7140789"
+         cy="272.91342"
+         cx="214.04396"
+         id="path4258-33"
+         style="fill:#007000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path4256-2"
+         d="m 319.29972,315.06138 1.19167,-32.98918"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.58169228;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <ellipse
+         ry="8.9437342"
+         rx="8.7140789"
+         cy="276.06085"
+         cx="320.4169"
+         id="path4258-03"
+         style="fill:#007000;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path5160"
+         d="m 93.624742,209.37975 252.538128,0"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend)" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path5466"
+         d="m 94.129818,208.36959 0,-138.895964"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text5720"
+         y="226.10818"
+         x="199.10263"
+         style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           id="tspan5724"
+           style="font-size:12.5px;text-anchor:middle;text-align:center"
+           y="226.10818"
+           x="92.614594"
+           sodipodi:role="line">Height of invasive species relative </tspan><tspan
+           id="tspan5728"
+           style="font-size:12.5px;text-anchor:middle;text-align:center"
+           y="241.73318"
+           x="92.614594"
+           sodipodi:role="line">to native species</tspan></text>
+      <text
+         transform="matrix(0,-1,1,0,0,0)"
+         sodipodi:linespacing="125%"
+         id="text5730"
+         y="44.132755"
+         x="-138.49669"
+         style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           style="font-size:12.5px;text-align:center;text-anchor:middle"
+           y="44.132755"
+           x="-136.29942"
+           id="tspan5732"
+           sodipodi:role="line">Carbon pools in invaded </tspan><tspan
+           id="tspan5736"
+           style="font-size:12.5px;text-align:center;text-anchor:middle"
+           y="59.757755"
+           x="-136.29942"
+           sodipodi:role="line">system relative to </tspan><tspan
+           id="tspan5738"
+           style="font-size:12.5px;text-align:center;text-anchor:middle"
+           y="75.382751"
+           x="-138.49669"
+           sodipodi:role="line">uninvaded system</tspan></text>
+      <path
+         inkscape:connector-curvature="0"
+         id="path5740"
+         d="M 105.71429,198.79078 324.61445,72.408705"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+    </g>
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4171-4-2"
+       width="368.62115"
+       height="319.49286"
+       x="375.61072"
+       y="16.901484" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="387.24088"
+       y="44.408798"
+       id="text4946-0"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4948-8"
+         x="387.24088"
+         y="44.408798"
+         style="font-size:15px;opacity:0">(b)</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="-142.5757"
+       y="390.16205"
+       id="text5730-8"
+       sodipodi:linespacing="125%"
+       transform="matrix(0,-1,1,0,0,0)"><tspan
+         sodipodi:role="line"
+         x="-142.5757"
+         y="390.16205"
+         style="font-size:12.5px;text-align:center;text-anchor:middle"
+         id="tspan5738-6" /></text>
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect4171-4-4"
+       width="736.81458"
+       height="319.49286"
+       x="6.9231763"
+       y="336.02173" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="41.040756"
+       y="362.36182"
+       id="text4946-8"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan4948-0"
+         x="41.040756"
+         y="362.36182"
+         style="font-size:15px;opacity:0">(c)</tspan></text>
+    <g
+       id="g4251">
+      <path
+         inkscape:connector-curvature="0"
+         id="path5160-4-6"
+         d="m 436.0826,285.95875 252.53815,0"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path5466-8-4"
+         d="m 435.87339,286.37716 0,-228.181659"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.28172708px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text5720-15-3"
+         y="300.57141"
+         x="558.67535"
+         style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           id="tspan5728-6-8"
+           style="font-size:12.5px;text-align:center;text-anchor:middle"
+           y="300.57141"
+           x="558.67535"
+           sodipodi:role="line">Water stress suffered by ecosystem</tspan></text>
+      <path
+         inkscape:connector-curvature="0"
+         id="path5905-2"
+         d="M 451.24347,280.46146 668.59912,72.834371"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2.05430579;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <text
+         transform="matrix(0,-1,1,0,0,0)"
+         sodipodi:linespacing="125%"
+         id="text5730-3"
+         y="396.95984"
+         x="-169.9278"
+         style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           style="font-size:12.5px;text-align:center;text-anchor:middle"
+           y="396.95984"
+           x="-167.73053"
+           id="tspan5732-8"
+           sodipodi:role="line">Carbon pools in invaded </tspan><tspan
+           id="tspan5736-6"
+           style="font-size:12.5px;text-align:center;text-anchor:middle"
+           y="412.58484"
+           x="-167.73053"
+           sodipodi:role="line">system relative to </tspan><tspan
+           id="tspan5738-7"
+           style="font-size:12.5px;text-align:center;text-anchor:middle"
+           y="428.20984"
+           x="-169.9278"
+           sodipodi:role="line">uninvaded system</tspan></text>
+    </g>
+    <g
+       id="g4241">
+      <path
+         inkscape:connector-curvature="0"
+         id="path5160-4"
+         d="m 72.051325,609.86058 252.538145,0"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path5466-8"
+         d="m 71.842115,610.27899 0,-228.18166"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.28172708px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      <text
+         transform="matrix(0,-1,1,0,0,0)"
+         sodipodi:linespacing="125%"
+         id="text5720-1"
+         y="38.488686"
+         x="-492.62573"
+         style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           id="tspan5728-5"
+           style="font-size:12.5px;text-align:center;text-anchor:middle"
+           y="38.488686"
+           x="-492.62573"
+           sodipodi:role="line">Height of invasive species relative to</tspan><tspan
+           id="tspan5875"
+           style="font-size:12.5px;text-align:center;text-anchor:middle"
+           y="54.113689"
+           x="-492.62573"
+           sodipodi:role="line">maximum attainable height</tspan></text>
+      <text
+         sodipodi:linespacing="125%"
+         id="text5720-15"
+         y="624.47327"
+         x="194.64406"
+         style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           id="tspan5728-6"
+           style="font-size:12.5px;text-align:center;text-anchor:middle"
+           y="624.47327"
+           x="194.64406"
+           sodipodi:role="line">Water stress suffered by ecosystem</tspan></text>
+      <path
+         inkscape:connector-curvature="0"
+         id="path5905"
+         d="M 83.825865,405.19261 308.11158,595.90688"
+         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    </g>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:10;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#TriangleOutM)"
+       d="m 264.17382,494.75801 109.09647,0"
+       id="path6011"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 464.73641,606.13689 252.53815,0"
+       id="path5160-4-6-0"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.28172708px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 464.5272,606.5553 0,-228.18166"
+       id="path5466-8-4-5"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#ae00ba;stroke-width:1.71956587;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 488.81565,566.30929 711.73976,432.05481"
+       id="path5905-2-0"
+       inkscape:connector-curvature="0" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="-490.10593"
+       y="425.61368"
+       id="text5730-3-6"
+       sodipodi:linespacing="125%"
+       transform="matrix(0,-1,1,0,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan5732-8-2"
+         x="-487.90866"
+         y="425.61368"
+         style="font-size:12.5px;text-align:center;text-anchor:middle">Carbon pools in invaded </tspan><tspan
+         sodipodi:role="line"
+         x="-487.90866"
+         y="441.23868"
+         style="font-size:12.5px;text-align:center;text-anchor:middle"
+         id="tspan5736-6-2">system relative to </tspan><tspan
+         sodipodi:role="line"
+         x="-490.10593"
+         y="456.86368"
+         style="font-size:12.5px;text-align:center;text-anchor:middle"
+         id="tspan5738-7-8">uninvaded system</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="574.16644"
+       y="622.79718"
+       id="text5720-11"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="576.36371"
+         y="622.79718"
+         style="font-size:12.5px;text-align:center;text-anchor:middle"
+         id="tspan5724-3">Height of invasive species relative </tspan><tspan
+         sodipodi:role="line"
+         x="574.16644"
+         y="638.42218"
+         style="font-size:12.5px;text-align:center;text-anchor:middle"
+         id="tspan5728-7">to native species</tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#ff0029;stroke-width:1.43843234;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 514.89975,587.91933 710.32488,509.81519"
+       id="path5905-2-0-7"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#0000f9;stroke-width:1.35128748;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 483.3234,539.73278 655.28745,372.08356"
+       id="path5905-2-0-5"
+       inkscape:connector-curvature="0" />
+  </g>
+</svg>
