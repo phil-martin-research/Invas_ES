@@ -33,21 +33,11 @@ Carb$CWD2<-(Carb$CWD-mean(Carb$CWD))/sd(Carb$CWD)
 Carb$SE_UI<-ifelse(Carb$Var=="SE",Carb$SE_UI/sqrt(Carb$SS_UI),Carb$SE_UI)
 Carb$SE_I<-ifelse(Carb$Var=="SE",Carb$SE_I/sqrt(Carb$SS_I),Carb$SE_I)
 
-
-#do some data exploration
-ggplot(Carb,aes(x=Height_RR,y=Diff_RR))+geom_point()+geom_smooth(method="lm",se=F)
-ggplot(Carb,aes(x=CWD,y=Diff_RR))+geom_point()+geom_smooth(method="lm",se=F)
-ggplot(Carb,aes(x=Precip,y=Diff_RR))+geom_point()+geom_smooth(method="lm",se=F)
-ggplot(Carb,aes(x=Temp/10,y=Diff_RR))+geom_point()+geom_smooth(method="lm",se=F)
-ggplot(Carb,aes(x=Woody_diff,y=Diff_RR))+geom_point()+geom_smooth(method="lm",se=F)
-ggplot(Carb,aes(x=Height_RR,y=CWD,size=Diff_RR))+geom_point()
-
-
 #now calculate effect sizes in metafor
 Carb_ES<-escalc("ROM",m2i=EF_UI,m1i=EF_I,sd2i=SE_UI,sd1i=SE_I,n2i=SS_UI,n1i=SS_I,data=Carb)
 Site_unique<-unique(Carb_ES$SiteID)
 Model_AIC_summary<-NULL
-for (i in 1:100) {
+for (i in 1:1000) {
   print(i)
   Carb_samp<-NULL
   for (j in 1:length(Site_unique)){#sample one site for each study so that no reference site is used more than once
@@ -78,7 +68,7 @@ for (i in 1:100) {
 }
 Model_AIC_summary$Rank1<-ifelse(Model_AIC_summary$Rank==1,1,0)
 #summarise the boostrapping routine by giving median values for model statistics - log liklihood, AICc delta AICc, R squared
-Model_sel_boot<-ddply(Model_AIC_summary,.(Vars),summarise,Modal_rank=Mode(Rank),Prop_rank=sum(Rank1)/100,log_liklihood=median(logLik),AICc_med=median(AICc),
+Model_sel_boot<-ddply(Model_AIC_summary,.(Vars),summarise,Modal_rank=Mode(Rank),Prop_rank=sum(Rank1)/1000,log_liklihood=median(logLik),AICc_med=median(AICc),
                       delta_med=median(delta),R2_med=median(R2))
 
 
@@ -132,7 +122,7 @@ new.data$inp <- over(new.data.poly, poly)
 new.data <- new.data[complete.cases(new.data),]
 
 # Calculate yi as you did:
-new.data$yi<-(new.data$Height_RR*0.10) + 0.20 + (1.29*new.data$CWD2) + ((new.data$CWD2*new.data$Height_RR)*0.03)
+new.data$yi<-(new.data$Height_RR*0.10) + 0.19 + (1.29*new.data$CWD2) + ((new.data$CWD2*new.data$Height_RR)*0.03)
 
 # Plot
 
@@ -143,3 +133,4 @@ P1<-ggplot(new.data, aes(x=Height_RR,y=(CWD2*374.6319)+-551.739,fill=yi)) +
 P2<-P1+theme(panel.border = element_rect(size=1.5,colour="black",fill=NA))
 P2+xlab("Difference between invasive and native species height\n(log response ratio)")+ylab("Climatic water deficit (mm)")
 ggsave("Figures/Carb_climate.pdf",width = 8,height = 4,units = "in",dpi = 400)
+ggsave("Figures/Carb_climate.png",width = 8,height = 4,units = "in",dpi = 400)
