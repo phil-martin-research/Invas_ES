@@ -8,6 +8,8 @@ library(metafor)
 library(MuMIn)
 library(sp)
 library(ncf)
+library(plyr)
+library(reshape)
 
 #and functions
 Mode <- function(x) {
@@ -37,6 +39,12 @@ AGB_ES<-escalc("ROM",m2i=EF_UI,m1i=EF_I,sd2i=SE_UI,sd1i=SE_I,n2i=SS_UI,n1i=SS_I,
 Site_unique<-unique(AGB_ES$SiteID)
 head(AGB_ES)
 
+ggplot(AGB_ES,aes(x=Diff_RR,y=CWD2))+geom_point()
+ggplot(AGB_ES,aes(x=Diff_RR))+geom_histogram()
+ggplot(AGB_ES,aes(x=CWD2))+geom_histogram()
+
+
+
 #produce a correlogram to look at spatial autocorrelation of effect sizes
 
 AGB.cor<-spline.correlog(AGB_ES$Latitude, AGB_ES$Longitude, AGB_ES$yi, latlon=T,resamp=1000,quiet=T)
@@ -48,11 +56,8 @@ Moran_plot2+geom_hline(y=0,lty=2)+xlab("Distance between sites (km)")+ylab("Mora
 ggsave("Figures/AGB_correl.pdf",height=6,width=8,units="in",dpi=300)
 
 
-?spline.correlog
-
-
 Model_AIC_summary<-NULL
-for (i in 1:100){
+for (i in 1:10000){
   print(i)
   AGB_samp<-NULL
   for (j in 1:length(Site_unique)){#sample one site for each study so that no reference site is used more than once
@@ -86,15 +91,15 @@ for (i in 1:100){
 
 Model_AIC_summary$Rank1<-ifelse(Model_AIC_summary$Rank==1,1,0)
 #summarise the boostrapping routine by giving median values for model statistics - log liklihood, AICc delta AICc, R squared
-Model_sel_boot<-ddply(Model_AIC_summary,.(Vars),summarise,Modal_rank=Mode(Rank),Prop_rank=sum(Rank1)/100,log_liklihood=median(logLik),AICc_med=median(AICc),
+Model_sel_boot<-ddply(Model_AIC_summary,.(Vars),summarise,Modal_rank=Mode(Rank),Prop_rank=sum(Rank1)/10000,log_liklihood=median(logLik),AICc_med=median(AICc),
                       delta_med=median(delta),R2_med=median(R2))
-
+write.csv(Model_sel_boot,"AGB_model_sel.csv")
 
 #now boostrap the top model to get parameter estimates
 Site_unique<-unique(AGB_ES$SiteID)
 Param_boot<-NULL
 Resid_corr<-NULL
-for (i in 1:1000){
+for (i in 1:10000){
   print(i)
   AGB_samp<-NULL
   for (j in 1:length(Site_unique)){#use same routine as previously to subsample dataset avoiding pseudo-replication
@@ -165,7 +170,7 @@ new.data <- new.data[complete.cases(new.data),]
 
 # Calculate yi as you did:
 
-new.data$yi<-(new.data$Height_RR*0.88) + 0.45 + (0.*new.data$CWD2) + ((new.data$CWD2*new.data$Height_RR)*-0.16)
+new.data$yi<-(new.data$Height_RR*0.88) + 0.45 + (0.16*new.data$CWD2) + ((new.data$CWD2*new.data$Height_RR)*-0.16)
 
 # Plot
 theme_set(theme_bw(base_size=12))
@@ -175,3 +180,4 @@ P1<-ggplot(new.data, aes(x=Height_RR,y=(CWD2*sd(AGB$CWD))+mean(AGB$CWD),fill=yi)
 P2<-P1+theme(panel.border = element_rect(size=1.5,colour="black",fill=NA))
 P2+xlab("Difference between invasive and native species height\n(log response ratio)")+ylab("Climatic water deficit (mm)")
 ggsave("Figures/AGB_climate.pdf",width = 8,height = 4,units = "in",dpi = 400)
+ggsave("Figures/AGB_climate.png",width = 8,height = 4,units = "in",dpi = 400)
