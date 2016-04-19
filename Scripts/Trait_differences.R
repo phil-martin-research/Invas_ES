@@ -35,3 +35,6 @@ sqrt(mean(((Species_traits$Trait_db_height-Species_traits$Median_height))^2,na.r
 
 plot(Species_traits$Trait_db_height,Species_traits$Median_height-Species_traits$Trait_db_height)
 
+
+M1<-lm(Trait_db_height~Median_height,data=Species_traits)
+summary(M1)
