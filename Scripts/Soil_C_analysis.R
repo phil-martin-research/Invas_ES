@@ -8,6 +8,7 @@ library(metafor)
 library(MuMIn)
 library(sp)
 library(plyr)
+library(ncf)
 #and functions
 Mode <- function(x) {
   ux <- unique(x)
@@ -35,13 +36,17 @@ Carb$SE_I<-ifelse(Carb$Var=="SE",Carb$SE_I/sqrt(Carb$SS_I),Carb$SE_I)
 
 #now calculate effect sizes in metafor
 Carb_ES<-escalc("ROM",m2i=EF_UI,m1i=EF_I,sd2i=SE_UI,sd1i=SE_I,n2i=SS_UI,n1i=SS_I,data=Carb)
-Site_unique<-unique(Carb_ES$SiteID)
+Ref_unique<-unique(Carb_ES$EF_UI)
+head(Carb_ES)
+length(unique(Carb_ES$Study))
+nrow(Carb_ES)
+
 Model_AIC_summary<-NULL
-for (i in 1:1000) {
+for (i in 1:100) {
   print(i)
   Carb_samp<-NULL
-  for (j in 1:length(Site_unique)){#sample one site for each study so that no reference site is used more than once
-    Carb_sub<-subset(Carb_ES,SiteID==Site_unique[j])
+  for (j in 1:length(Ref_unique)){#sample one site for each study so that no reference site is used more than once
+    Carb_sub<-subset(Carb_ES,EF_UI==Ref_unique[j])
     Carb_sub<-Carb_sub[sample(nrow(Carb_sub), 1), ] 
     Carb_samp<-rbind(Carb_sub,Carb_samp)
   }
@@ -70,16 +75,18 @@ Model_AIC_summary$Rank1<-ifelse(Model_AIC_summary$Rank==1,1,0)
 #summarise the boostrapping routine by giving median values for model statistics - log liklihood, AICc delta AICc, R squared
 Model_sel_boot<-ddply(Model_AIC_summary,.(Vars),summarise,Modal_rank=Mode(Rank),Prop_rank=sum(Rank1)/1000,log_liklihood=median(logLik),AICc_med=median(AICc),
                       delta_med=median(delta),R2_med=median(R2))
+write.csv(Model_sel_boot,"Soil_model_sel.csv")
 
 
 #now boostrap the top model to get parameter estimates
-Site_unique<-unique(Carb_ES$SiteID)
+Ref_unique<-unique(Carb_ES$EF_UI)
 Param_boot<-NULL
+Resid_corr<-NULL
 for (i in 1:1000){
   print(i)
   Carb_samp<-NULL
-  for (j in 1:length(Site_unique)){#use same routine as previously to subsample dataset avoiding pseudo-replication
-    Carb_sub<-subset(Carb_ES,SiteID==Site_unique[j])
+  for (j in 1:length(Ref_unique)){#use same routine as previously to subsample dataset avoiding pseudo-replication
+    Carb_sub<-subset(Carb_ES,EF_UI==Ref_unique[j])
     Carb_sub<-Carb_sub[sample(nrow(Carb_sub), 1), ]
     Carb_samp<-rbind(Carb_sub,Carb_samp)
   }
@@ -91,6 +98,9 @@ for (i in 1:1000){
                          ci_lb=round(coef(summary(Model4))[5],2),
                          ci_ub=round(coef(summary(Model4))[6],2))
   Param_boot<-rbind(Param_vals,Param_boot)
+  Soil.cor<-spline.correlog(Carb_samp$Latitude, Carb_samp$Longitude, resid(Model4), latlon=T,resamp=1000,quiet=T)
+  Soil.corr2<-data.frame(Dist=Soil.cor$boot$boot.summary$predicted$x[1,],Cor=Soil.cor$boot$boot.summary$predicted$y[6,],UCI=Soil.cor$boot$boot.summary$predicted$y[2,],LCI=Soil.cor$boot$boot.summary$predicted$y[10,])
+  Resid_corr<-rbind(Resid_corr,Soil.corr2)
 }
 
 #produce summary of parameter estimates
@@ -99,6 +109,21 @@ Param_boot_sum<-ddply(Param_boot,.(Parameter),summarise,coef_estimate=median(est
 
 #write this table of parameter estimates
 write.table(Param_boot_sum,file="Tables/Soil_C_parameter_estimates.csv",sep=",")
+
+#produce summary of analysis of spatial auto-correlation
+head(Resid_corr)
+SA_boot_sum<-ddply(Resid_corr,.(Dist),summarise,Cor_mean=mean(Cor),lower=mean(LCI),
+                   upper=mean(UCI))
+
+theme_set(theme_bw(base_size=12))
+Moran_plot1<-ggplot(SA_boot_sum,aes(x=Dist,y=Cor_mean,ymax=upper,ymin=lower))+geom_ribbon(alpha=0.2)+geom_line(size=0.5,colour="black")
+Moran_plot2<-Moran_plot1+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),panel.border = element_rect(size=1.5,colour="black",fill=NA))+ theme(legend.position="none")
+Moran_plot2+geom_hline(y=0,lty=2)+xlab("Distance between sites (km)")+ylab("Moran's I correlation")+scale_size_continuous(range = c(1,3))
+ggsave("Figures/Soil_C_resid_correl.pdf",height=6,width=8,units="in",dpi=300)
+ggsave("Figures/Soil_C_resid_correl.png",height=6,width=8,units="in",dpi=300)
+
+
+ggplot(data=Carb_ES,aes(x=CWD2,y=Height_RR))+geom_point()
 
 
 #create new dataset for predictions

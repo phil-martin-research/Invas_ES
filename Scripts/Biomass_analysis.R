@@ -38,6 +38,8 @@ AGB2<-subset(AGB,!is.na(Height_RR)&Terr_aqu=="Terrestrial")
 AGB_ES<-escalc("ROM",m2i=EF_UI,m1i=EF_I,sd2i=SE_UI,sd1i=SE_I,n2i=SS_UI,n1i=SS_I,data=AGB2)
 Site_unique<-unique(AGB_ES$SiteID)
 head(AGB_ES)
+length(unique(AGB_ES$Study))
+nrow(AGB_ES)
 
 ggplot(AGB_ES,aes(x=Diff_RR,y=CWD2))+geom_point()
 ggplot(AGB_ES,aes(x=Diff_RR))+geom_histogram()
@@ -93,7 +95,7 @@ Model_AIC_summary$Rank1<-ifelse(Model_AIC_summary$Rank==1,1,0)
 #summarise the boostrapping routine by giving median values for model statistics - log liklihood, AICc delta AICc, R squared
 Model_sel_boot<-ddply(Model_AIC_summary,.(Vars),summarise,Modal_rank=Mode(Rank),Prop_rank=sum(Rank1)/10000,log_liklihood=median(logLik),AICc_med=median(AICc),
                       delta_med=median(delta),R2_med=median(R2))
-write.csv(Model_sel_boot,"AGB_model_sel.csv")
+write.csv(Model_sel_boot,"Tables/AGB_model_sel.csv")
 
 #now boostrap the top model to get parameter estimates
 Site_unique<-unique(AGB_ES$SiteID)
