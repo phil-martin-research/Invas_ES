@@ -85,21 +85,3 @@ ggsave(filename = "Figures/Invasive_locations.pdf",width = 8,height=4,units='in'
 ggsave(filename = "Figures/Invasive_locations.png",width = 8,height=4,units='in',dpi=400)
 
 
-###############################################################################
-#this section allows mapping of where invasive species occur###################
-#with data taken from the Invasive Species Compendium##########################
-###############################################################################
-
-Geog_bias<-read.csv("Data/Bias_analyses/Invasive_location.csv")
-head(Geog_bias)
-
-Geom_summ<-ddply(Geog_bias,.(Long,Lat),summarise,Inv_count=length(Invasive))
-
-#now map the locations of these
-mapWorld <- borders("world", colour="gray50", fill="gray50") # create a layer of borders
-P_Bias1<- ggplot() +   mapWorld
-P_Bias2 <- P_Bias1+ geom_point(data=Geom_summ,aes(x=Long, y=Lat,size=Inv_count) ,color="blue") 
-P_Bias2
-
-ggplot()+geom_point(data=Geom_summ,aes(x=Long, y=Lat,size=Inv_count) ,color="blue") 
-
