@@ -7,7 +7,7 @@ library(reshape)
 
 ISC_records<-read.csv("Data/ISC_records.csv",stringsAsFactors = F)
 
-#create a loop to gather information on the location of species from ISC
+#to gather information on the location of species, in text format, from ISC
 #but NOT their latitude and longitude
 Location_summary<-NULL
 for (i in 1:nrow(ISC_records)){
@@ -27,9 +27,6 @@ for (i in 1:nrow(ISC_records)){
   Location_summary<-rbind(Location3,Location_summary)
   print(paste(round((i/nrow(ISC_records))*100,2),"% finished"))
 }
-
-
-head(Location_summary)
 
 write.csv(Location_summary,file = "Data/Bias_analyses/Invasive_location.csv")
 
@@ -61,17 +58,32 @@ un_loc<-as.character(unique(Geog_bias$Location))
 geocode_summary<-NULL
 for (i in 1:length(un_loc)){
   sub_loc<-geocode(un_loc[i],output = "more")
-  sub_loc2<-data.frame(Location=un_loc[i],type=sub_loc$type,lon=sub_loc$lon,lat=sub_loc$lat,
-             north=sub_loc$north,south=sub_loc$south,east=sub_loc$east,west=sub_loc$west)
-  data.frame(Location=un_loc[i],type=sub_loc$type,lon=sub_loc$lon,lat=sub_loc$lat,
-             lon_poly=rep(c(sub_loc$east,sub_loc$west),each=2),
-             lat_poly=rep(c(sub_loc$north,sub_loc$south),2))
+  sub_loc2<-data.frame(Location=un_loc[i],type=sub_loc$type,lon=sub_loc$lon,lat=sub_loc$lat)
   geocode_summary<-rbind(sub_loc2,geocode_summary)
 }
 
-geocode("Guinea-Bissau",output = "more")
+Geom_bias_loc<-merge(Geog_bias,geocode_summary,by="Location")
+head(Geom_bias_loc)
+Geom_bias_summary<-ddply(Geom_bias_loc,.(Location,lon,lat),summarise,inv_count=length(Name))
 
-ggplot(geocode_summary,aes())
+
+#now map the locations of these
+theme_set(theme_bw(base_size=12))
+world<-map_data("world")
+P_Bias1<- ggplot()+geom_polygon( data=world, aes(x=long, y=lat, group = group),fill="grey")
+P_Bias2 <- P_Bias1+ geom_point(data=Geom_bias_summary,aes(x=lon,y=lat,size=inv_count),alpha=0.4,colour="blue")
+P_Bias3<-P_Bias2+theme(panel.grid.major = element_blank(),
+              panel.grid.minor = element_blank(),
+              panel.border = element_rect(size=1.5,colour="black",fill=NA),
+              axis.text.x=element_blank(),
+              axis.text.y=element_blank(),
+              axis.ticks=element_blank(),
+              axis.title.x=element_blank(),
+              axis.title.y=element_blank())
+P_Bias3+scale_size("Number of invasive \nplant species recorded")+coord_equal()+ylim(c(-55,90))
+ggsave(filename = "Figures/Invasive_locations.pdf",width = 8,height=4,units='in',dpi=400)
+ggsave(filename = "Figures/Invasive_locations.png",width = 8,height=4,units='in',dpi=400)
+
 
 ###############################################################################
 #this section allows mapping of where invasive species occur###################
