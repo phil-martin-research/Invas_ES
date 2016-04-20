@@ -7,8 +7,11 @@ library(reshape)
 
 ISC_records<-read.csv("Data/ISC_records.csv",stringsAsFactors = F)
 
+#create a loop to gather information on the location of species from ISC
+#but NOT their latitude and longitude
 Location_summary<-NULL
 for (i in 1:nrow(ISC_records)){
+  i<-1
   isc <- read_html(ISC_records[i,4])
   ns <- xml_ns(isc)
   Location<-xml_text(xml_find_all(isc, xpath="//div[@id='toDistributionTable']/table/tbody/tr/td[1]", ns))
@@ -17,33 +20,17 @@ for (i in 1:nrow(ISC_records)){
   Location_sub<-subset(Location,Location!="ASIA"&Location!="AFRICA"&Location!="NORTH AMERICA"&
                          Location!="CENTRAL AMERICA AND CARIBBEAN"&Location!="SOUTH AMERICA"&
                          Location!="OCEANIA"&Location!="EUROPE"&Location!="ANTARCTICA"&Location!="SEA AREAS")
-  Location_sub<-ifelse(Location_sub=="Georgia (Republic of)","Republic of Georgia",Location_sub)
-  Location_sub<-ifelse(Location_sub=="-Nei Menggu","Inner Mongolia",Location_sub)
-  Location_sub<-ifelse(Location_sub=="Turkey-in-Asia","Turkey",Location_sub)
   if (length(Location_sub)>0){
   Location2<-data.frame(Name=ISC_records[i,1],Location=Location_sub,Nat_Inv=Nat_Inv,Invasive=Invasive,record=i)
   Location2$Location<-gsub("-", "", Location2$Location, fixed = TRUE)
   Location3<-subset(Location2,Invasive=="Invasive")
-  Sub_loc<-NULL
   }
-  if (nrow(Location3)>0){
-  for (j in 1:nrow(Location3)){
-  Sub_loc3<-Location3[j,]
-  Lat_longs<-geocode(Sub_loc3$Location,output = "more",source = "google")
-  Sub_loc3$long<-Lat_longs$lon
-  Sub_loc3$lat<-Lat_longs$lat
-  Sub_loc3$north<-Lat_longs$north
-  Sub_loc3$south<-Lat_longs$south
-  Sub_loc3$east<-Lat_longs$east
-  Sub_loc3$west<-Lat_longs$west
-  Sub_loc3$country<-Lat_longs$country
-  Sub_loc<-rbind(Sub_loc3,Sub_loc)
-  }
-  Location_summary<-rbind(Sub_loc,Location_summary)
-  }
+  Location_summary<-rbind(Location3,Location_summary)
   print(paste(round((i/nrow(ISC_records))*100,2),"% finished"))
 }
 
+
+head(Location_summary)
 
 write.csv(Location_summary,file = "Data/Bias_analyses/Invasive_location.csv")
 
