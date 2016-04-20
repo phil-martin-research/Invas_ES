@@ -1,3 +1,11 @@
+#script to scrape data on invasive plant species records
+#from invasive species compendium and use this to see if there are any geographic or climate
+#biases in the dataset we have used to assess impacts of invasive species on carbon pools
+
+#author:Phil Martin
+#date last edited:2016-04-20
+
+#load packages
 library(rvest)
 library(ggmap)
 library(xml2)
@@ -5,10 +13,11 @@ library(ggplot2)
 library(plyr)
 library(reshape)
 
+#import list of all plant species that have datasheets in the ISC
 ISC_records<-read.csv("Data/ISC_records.csv",stringsAsFactors = F)
 
-#to gather information on the location of species, in text format, from ISC
-#but NOT their latitude and longitude
+#gather information on the location of species, in text format, from ISC
+#but NOT their latitude and longitude, as this is not available
 Location_summary<-NULL
 for (i in 1:nrow(ISC_records)){
   isc <- read_html(ISC_records[i,4])
@@ -53,7 +62,7 @@ Geog_bias$Location<-ifelse(Geog_bias$Location=="GuineaBissau","Guinea-Bissau",Ge
 Geog_bias$Location<-ifelse(Geog_bias$Location=="Eastern Siberia","Siberia",Geog_bias$Location)
 Geog_bias$Location<-ifelse(Geog_bias$Location=="TurkeyinAsia","Turkey",Geog_bias$Location)
 
-
+#loop through unique place names and return longitude and latitude data
 un_loc<-as.character(unique(Geog_bias$Location))
 geocode_summary<-NULL
 for (i in 1:length(un_loc)){
@@ -62,8 +71,9 @@ for (i in 1:length(un_loc)){
   geocode_summary<-rbind(sub_loc2,geocode_summary)
 }
 
+#merge lat and longs with species data
 Geom_bias_loc<-merge(Geog_bias,geocode_summary,by="Location")
-head(Geom_bias_loc)
+#get count of number of invasive species for each unique long and lat
 Geom_bias_summary<-ddply(Geom_bias_loc,.(Location,lon,lat),summarise,inv_count=length(Name))
 
 
