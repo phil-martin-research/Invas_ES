@@ -5,6 +5,10 @@
 #author:Phil Martin
 #date last edited:2016-04-20
 
+
+citation("rvest")
+citation("fundiv")
+
 #load packages
 library(rvest)
 library(ggmap)
@@ -12,6 +16,9 @@ library(xml2)
 library(ggplot2)
 library(plyr)
 library(reshape)
+library(raster)
+library(gridExtra)
+library(grid)
 
 #import list of all plant species that have datasheets in the ISC
 ISC_records<-read.csv("Data/ISC_records.csv",stringsAsFactors = F)
@@ -76,7 +83,6 @@ Geom_bias_loc<-merge(Geog_bias,geocode_summary,by="Location")
 #get count of number of invasive species for each unique long and lat
 Geom_bias_summary<-ddply(Geom_bias_loc,.(Location,lon,lat),summarise,inv_count=length(Name))
 
-
 #now map the locations of these
 theme_set(theme_bw(base_size=12))
 world<-map_data("world")
@@ -90,8 +96,63 @@ P_Bias3<-P_Bias2+theme(panel.grid.major = element_blank(),
               axis.ticks=element_blank(),
               axis.title.x=element_blank(),
               axis.title.y=element_blank())
-P_Bias3+scale_size("Number of invasive \nplant species recorded")+coord_equal()+ylim(c(-55,90))
-ggsave(filename = "Figures/Invasive_locations.pdf",width = 8,height=4,units='in',dpi=400)
-ggsave(filename = "Figures/Invasive_locations.png",width = 8,height=4,units='in',dpi=400)
+P_Bias4<-P_Bias3+scale_size("Number of invasive plant \nspecies recorded")+coord_equal()+ylim(c(-55,90))+theme(legend.position="bottom")
 
+#map locations of studies
+studies<-read.csv("Data/Studies_climate.csv")
+Studies_summary<-ddply(studies,.(long,lat),summarise,inv_count=length(EF_type))
 
+P_Studies1<- ggplot()+geom_polygon( data=world, aes(x=long, y=lat, group = group),fill="grey")
+P_Studies2 <- P_Studies1+ geom_point(data=Studies_summary,aes(x=long,y=lat,size=inv_count),alpha=0.4,colour="blue")
+P_Studies3<-P_Studies2+theme(panel.grid.major = element_blank(),
+                       panel.grid.minor = element_blank(),
+                       panel.border = element_rect(size=1.5,colour="black",fill=NA),
+                       axis.text.x=element_blank(),
+                       axis.text.y=element_blank(),
+                       axis.ticks=element_blank(),
+                       axis.title.x=element_blank(),
+                       axis.title.y=element_blank())
+P_Studies4<-P_Studies3+scale_size("Number of datapoints \nused in study")+coord_equal()+ylim(c(-55,90))+theme(legend.position="bottom")
+
+pdf("Figures/Bias_map.pdf")
+grid.arrange(P_Bias4,P_Studies4)
+dev.off()
+
+#now look at climate space occupied by these species
+CWD_raster<-raster("Data/Climate/CWD/cwd.bil")
+Geom_bias_loc$CWD<-extract(CWD_raster,cbind(Geom_bias_loc$lon,Geom_bias_loc$lat),method='bilinear')
+Inv_CWD<-ggplot(Geom_bias_loc,aes(x=CWD))+geom_histogram(aes(y=(..count../sum(..count..))*100))+xlim(c(-2500,0))
+Inv_CWD2<-Inv_CWD+ylab("Percentage of locations with\n invasive plant records")+xlab("Climatic water deficit (mm)")
+
+Study_CWD<-ggplot(studies,aes(x=CWD))+geom_histogram(aes(y=(..count../sum(..count..))*100))+xlim(c(-2500,0))
+Study_CWD2<-Study_CWD+ylab("Percentage of datapoints \nused in study")+xlab("Climatic water deficit (mm)")
+
+pdf("Figures/Bias_CWD.pdf")
+grid.arrange(Inv_CWD2,Study_CWD2)
+dev.off()
+
+#now try putting all these figures together into one
+pdf("Figures/Biases.pdf")
+grid.arrange(P_Bias4,Inv_CWD2,P_Studies4,Study_CWD2,ncol=2)
+dev.off()
+
+#now a figure of just the difference in percentage of studies for different CWD values
+Geom_bias_loc$CWD_bin<-cut(Geom_bias_loc$CWD,breaks = seq(-2500,0,by = 250),labels= seq(-2500,-250,by = 250),include.lowest=T)
+Geom_bias_loc2<-Geom_bias_loc[complete.cases(Geom_bias_loc),]
+head(Geom_bias_loc2)
+Geom_bias_CWD_summary<-ddply(Geom_bias_loc2,.(CWD_bin),summarise,perc=(length(Name)/nrow(Geom_bias_loc2))*100)
+
+studies$CWD_bin<-cut(studies$CWD,breaks = seq(-2500,0,by = 250),labels= seq(-2500,-250,by = 250),include.lowest=T)
+studies2<-studies[complete.cases(studies),]
+head(studies2)
+studies_bias_CWD_summary<-ddply(studies2,.(CWD_bin),summarise,perc=(length(lat)/nrow(studies2))*100)
+
+CWD_comp<-merge(studies_bias_CWD_summary,Geom_bias_CWD_summary,by="CWD_bin",all.y=T)
+CWD_comp[is.na(CWD_comp)]<-0
+CWD_comp$diff<-CWD_comp$perc.x-CWD_comp$perc.y
+
+#plot pf differences in percentage of sites in different climatic zones
+theme_set(theme_bw(base_size=12))
+CWD_P1<-ggplot(CWD_comp,aes(x=CWD_bin,y=diff))+geom_point()+geom_hline(yintercept=0,lty=2)
+CWD_P1+ylab("Difference in percentage of sites \nused in our study vs global records")+xlab("Climatic water deficit (mm)")
+ggsave("Figures/CWD_diff_bias.pdf",width = 6,height=4,units = "in",dpi=400)
