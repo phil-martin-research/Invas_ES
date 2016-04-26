@@ -9,6 +9,8 @@ library(MuMIn)
 library(sp)
 library(plyr)
 library(ncf)
+library(scales)
+
 #and functions
 Mode <- function(x) {
   ux <- unique(x)
@@ -17,7 +19,7 @@ Mode <- function(x) {
 
 
 #read in data
-Carb<-read.csv("Data/SC_trait_climate.csv")
+Carb<-read.csv("Data/SC_trait_climate2.csv")
 head(Carb)
 Carb<-subset(Carb, select = -c(Native_C3,Inv_C3) )
 Carb<-subset(Carb, Terr_aqu=="Terrestrial" )
@@ -25,6 +27,7 @@ Carb<-Carb[complete.cases(Carb),]
 
 Carb$Height_diff<-Carb$Inv_height-Carb$Native_height
 Carb$Height_RR<-log(Carb$Inv_height)-log(Carb$Native_height)
+Carb$Height_Perc<-Carb$Inv_height/Carb$Native_height
 Carb$Height_prop<-(Carb$Inv_height-Carb$Native_height)/Carb$Native_height
 Carb$Woody_diff<-Carb$Inv_woodiness-Carb$Native_woodiness
 Carb$Diff_RR<-log(Carb$EF_I)-log(Carb$EF_UI)
@@ -36,13 +39,10 @@ Carb$SE_I<-ifelse(Carb$Var=="SE",Carb$SE_I/sqrt(Carb$SS_I),Carb$SE_I)
 
 #now calculate effect sizes in metafor
 Carb_ES<-escalc("ROM",m2i=EF_UI,m1i=EF_I,sd2i=SE_UI,sd1i=SE_I,n2i=SS_UI,n1i=SS_I,data=Carb)
-Ref_unique<-unique(Carb_ES$EF_UI)
-head(Carb_ES)
-length(unique(Carb_ES$Study))
-nrow(Carb_ES)
 
+Ref_unique<-unique(Carb_ES$EF_UI)
 Model_AIC_summary<-NULL
-for (i in 1:100) {
+for (i in 1:1000) {
   print(i)
   Carb_samp<-NULL
   for (j in 1:length(Ref_unique)){#sample one site for each study so that no reference site is used more than once
@@ -53,14 +53,20 @@ for (i in 1:100) {
   Model0<-rma.mv(yi~1,vi,random=list(~1|Study),data=Carb_samp,method="ML")
   Model1<-rma.mv(yi~Height_RR,vi,random=list(~1|Study),data=Carb_samp,method="ML")
   Model2<-rma.mv(yi~CWD2,vi,random=list(~1|Study),data=Carb_samp,method="ML")
-  Model3<-rma.mv(yi~Height_RR*CWD2,vi,random=list(~1|Study),data=Carb_samp,method="ML")
+  Model3<-rma.mv(yi~Height_Perc+CWD2,vi,random=list(~1|Study),data=Carb_samp,method="ML")
+  Model4<-rma.mv(yi~Height_Perc*CWD2,vi,random=list(~1|Study),data=Carb_samp,method="ML")
   Model_AIC<-data.frame(AICc=c(Model0$fit.stats$ML[5],Model1$fit.stats$ML[5],Model2$fit.stats$ML[5],#produce AICc values for the models
-                               Model3$fit.stats$ML[5]))
-  Model_AIC$Vars<-c("Null","Height_RR","CWD","Height*CWD") #details of model variables
+                               Model3$fit.stats$ML[5],Model4$fit.stats$ML[5]))
+  Model_AIC$Vars<-c("Null","Height_RR","CWD","Height+CWD","Height*CWD") #details of model variables
   Model_AIC$logLik<-c(Model0$fit.stats$ML[1],Model1$fit.stats$ML[1],Model2$fit.stats$ML[1],#put logLiklihood in the table
-                      Model3$fit.stats$ML[1])
+                      Model3$fit.stats$ML[1],Model4$fit.stats$ML[1])
+  ggplot(Carb_samp,aes(x=SS_I+SS_UI,y=((1/vi)/528467.4)*100,label=SiteID))+geom_point()+geom_text(size=2)+scale_y_continuous(labels = comma)
+  sum(1/Carb_samp$vi)
+  
+  
+  plot(fitted(Model4),resid(Model4))
   Null_dev<-deviance(Model0)
-  Dev<-c(deviance(Model0),deviance(Model1),deviance(Model2),deviance(Model3))
+  Dev<-c(deviance(Model0),deviance(Model1),deviance(Model2),deviance(Model3),deviance(Model4))
   Model_AIC$R2<-1-(Dev/Null_dev) #calculate pseudo-r squared using model deviance
   Model_AIC$R2<-ifelse(Model_AIC$R2<0,0,Model_AIC$R2)
   Model_AIC<-Model_AIC[order(Model_AIC$AICc),] #reorder from lowest to highest
@@ -68,7 +74,7 @@ for (i in 1:100) {
   Model_AIC$rel_lik<-exp((Model_AIC$AICc[1]-Model_AIC$AICc)/2)#calculate the relative likelihood of model
   Model_AIC$weight<-Model_AIC$rel_lik/(sum(Model_AIC$rel_lik))
   Model_AIC$Run<-i
-  Model_AIC$Rank<-seq(1,4,1) #rank models from 1-8 in terms of parsimony
+  Model_AIC$Rank<-seq(1,5,1) #rank models from 1-8 in terms of parsimony
   Model_AIC_summary<-rbind(Model_AIC,Model_AIC_summary)
 }
 Model_AIC_summary$Rank1<-ifelse(Model_AIC_summary$Rank==1,1,0)
@@ -90,6 +96,7 @@ for (i in 1:1000){
     Carb_sub<-Carb_sub[sample(nrow(Carb_sub), 1), ]
     Carb_samp<-rbind(Carb_sub,Carb_samp)
   }
+  for (j in seq(1,3)) {Carb_samp<-subset(Carb_samp,vi>min(Carb_samp$vi))}
   Model4<-rma.mv(yi~Height_RR*CWD2,vi,random=list(~1|Study),data=Carb_samp,method="REML")
   Param_vals<-data.frame(Parameter=c("Intercept","Height","CWD","Height*CWD"),
                          estimate=round(coef(summary(Model4))[1],2),
