@@ -32,6 +32,7 @@ Carb$Height_prop<-(Carb$Inv_height-Carb$Native_height)/Carb$Native_height
 Carb$Woody_diff<-Carb$Inv_woodiness-Carb$Native_woodiness
 Carb$Diff_RR<-log(Carb$EF_I)-log(Carb$EF_UI)
 Carb$CWD2<-(Carb$CWD-mean(Carb$CWD))/sd(Carb$CWD)
+Carb$Height_RR2<-(Carb$Height_RR-mean(Carb$Height_RR))/sd(Carb$Height_RR)
 
 #correct the variance for all measurements so that they are equal to SD
 Carb$SE_UI<-ifelse(Carb$Var=="SE",Carb$SE_UI/sqrt(Carb$SS_UI),Carb$SE_UI)
@@ -39,6 +40,8 @@ Carb$SE_I<-ifelse(Carb$Var=="SE",Carb$SE_I/sqrt(Carb$SS_I),Carb$SE_I)
 
 #now calculate effect sizes in metafor
 Carb_ES<-escalc("ROM",m2i=EF_UI,m1i=EF_I,sd2i=SE_UI,sd1i=SE_I,n2i=SS_UI,n1i=SS_I,data=Carb)
+
+ggplot(Carb_ES,aes(x=Height_RR,y=yi))+geom_point()
 
 Ref_unique<-unique(Carb_ES$EF_UI)
 Model_AIC_summary<-NULL
@@ -50,21 +53,26 @@ for (i in 1:1000) {
     Carb_sub<-Carb_sub[sample(nrow(Carb_sub), 1), ] 
     Carb_samp<-rbind(Carb_sub,Carb_samp)
   }
+  
   Model0<-rma.mv(yi~1,vi,random=list(~1|Study),data=Carb_samp,method="ML")
   Model1<-rma.mv(yi~Height_RR,vi,random=list(~1|Study),data=Carb_samp,method="ML")
-  Model2<-rma.mv(yi~CWD2,vi,random=list(~1|Study),data=Carb_samp,method="ML")
-  Model3<-rma.mv(yi~Height_Perc+CWD2,vi,random=list(~1|Study),data=Carb_samp,method="ML")
-  Model4<-rma.mv(yi~Height_Perc*CWD2,vi,random=list(~1|Study),data=Carb_samp,method="ML")
+  Model2<-rma.mv(yi~log(4-CWD2),vi,random=list(~1|Study),data=Carb_samp,method="ML")
+  Model3<-rma.mv(yi~Height_RR+log(4-CWD2),vi,random=list(~1|Study),data=Carb_samp,method="ML")
+  Model4<-rma.mv(yi~Height_RR*log(4-CWD2),vi,random=list(~1|Study),data=Carb_samp,method="ML")
   Model_AIC<-data.frame(AICc=c(Model0$fit.stats$ML[5],Model1$fit.stats$ML[5],Model2$fit.stats$ML[5],#produce AICc values for the models
                                Model3$fit.stats$ML[5],Model4$fit.stats$ML[5]))
+  plot(fitted(Model4),residuals(Model4))
+  
+  AICc(Model0,Model1)
+  
+  hist(sqrt(Carb_samp$CWD2)+3)
+  
+  hist(log(4-Carb_samp$CWD2))
+  
+  
   Model_AIC$Vars<-c("Null","Height_RR","CWD","Height+CWD","Height*CWD") #details of model variables
   Model_AIC$logLik<-c(Model0$fit.stats$ML[1],Model1$fit.stats$ML[1],Model2$fit.stats$ML[1],#put logLiklihood in the table
                       Model3$fit.stats$ML[1],Model4$fit.stats$ML[1])
-  ggplot(Carb_samp,aes(x=SS_I+SS_UI,y=((1/vi)/528467.4)*100,label=SiteID))+geom_point()+geom_text(size=2)+scale_y_continuous(labels = comma)
-  sum(1/Carb_samp$vi)
-  
-  
-  plot(fitted(Model4),resid(Model4))
   Null_dev<-deviance(Model0)
   Dev<-c(deviance(Model0),deviance(Model1),deviance(Model2),deviance(Model3),deviance(Model4))
   Model_AIC$R2<-1-(Dev/Null_dev) #calculate pseudo-r squared using model deviance
@@ -81,7 +89,7 @@ Model_AIC_summary$Rank1<-ifelse(Model_AIC_summary$Rank==1,1,0)
 #summarise the boostrapping routine by giving median values for model statistics - log liklihood, AICc delta AICc, R squared
 Model_sel_boot<-ddply(Model_AIC_summary,.(Vars),summarise,Modal_rank=Mode(Rank),Prop_rank=sum(Rank1)/1000,log_liklihood=median(logLik),AICc_med=median(AICc),
                       delta_med=median(delta),R2_med=median(R2))
-write.csv(Model_sel_boot,"Soil_model_sel.csv")
+write.csv(Model_sel_boot,"Tables/Soil_model_sel.csv")
 
 
 #now boostrap the top model to get parameter estimates
@@ -96,7 +104,6 @@ for (i in 1:1000){
     Carb_sub<-Carb_sub[sample(nrow(Carb_sub), 1), ]
     Carb_samp<-rbind(Carb_sub,Carb_samp)
   }
-  for (j in seq(1,3)) {Carb_samp<-subset(Carb_samp,vi>min(Carb_samp$vi))}
   Model4<-rma.mv(yi~Height_RR*CWD2,vi,random=list(~1|Study),data=Carb_samp,method="REML")
   Param_vals<-data.frame(Parameter=c("Intercept","Height","CWD","Height*CWD"),
                          estimate=round(coef(summary(Model4))[1],2),
@@ -130,9 +137,6 @@ ggsave("Figures/Soil_C_resid_correl.pdf",height=6,width=8,units="in",dpi=300)
 ggsave("Figures/Soil_C_resid_correl.png",height=6,width=8,units="in",dpi=300)
 
 
-ggplot(data=Carb_ES,aes(x=CWD2,y=Height_RR))+geom_point()
-
-
 #create new dataset for predictions
 new.data<-expand.grid(Height_RR=seq(min(Carb_ES$Height_RR),max(Carb_ES$Height_RR),length.out = 1000),
                       CWD2=seq(min(Carb_ES$CWD2,na.rm = T),max(Carb_ES$CWD2,na.rm = T),length.out = 1000))
@@ -154,7 +158,7 @@ new.data$inp <- over(new.data.poly, poly)
 new.data <- new.data[complete.cases(new.data),]
 
 # Calculate yi as you did:
-new.data$yi<-(new.data$Height_RR*0.10) + 0.19 + (1.29*new.data$CWD2) + ((new.data$CWD2*new.data$Height_RR)*0.03)
+new.data$yi<-(new.data$Height_RR*-0.07) + 0.17 + (0.07*new.data$CWD2) + ((new.data$CWD2*new.data$Height_RR)*0.10)
 
 # Plot
 

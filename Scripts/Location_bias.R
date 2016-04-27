@@ -6,9 +6,6 @@
 #date last edited:2016-04-20
 
 
-citation("rvest")
-citation("fundiv")
-
 #load packages
 library(rvest)
 library(ggmap)
@@ -19,6 +16,7 @@ library(reshape)
 library(raster)
 library(gridExtra)
 library(grid)
+library(taxize)
 
 #import list of all plant species that have datasheets in the ISC
 ISC_records<-read.csv("Data/ISC_records.csv",stringsAsFactors = F)
@@ -131,6 +129,11 @@ pdf("Figures/Bias_CWD.pdf")
 grid.arrange(Inv_CWD2,Study_CWD2)
 dev.off()
 
+Geom_bias_loc[,10]
+data.frame(CWD=studies[,4]
+  
+
+
 #now try putting all these figures together into one
 pdf("Figures/Biases.pdf")
 grid.arrange(P_Bias4,Inv_CWD2,P_Studies4,Study_CWD2,ncol=2)
@@ -156,3 +159,42 @@ theme_set(theme_bw(base_size=12))
 CWD_P1<-ggplot(CWD_comp,aes(x=CWD_bin,y=diff))+geom_point()+geom_hline(yintercept=0,lty=2)
 CWD_P1+ylab("Difference in percentage of sites \nused in our study vs global records")+xlab("Climatic water deficit (mm)")
 ggsave("Figures/CWD_diff_bias.pdf",width = 6,height=4,units = "in",dpi=400)
+ggsave("Figures/CWD_diff_bias.png",width = 6,height=4,units = "in",dpi=400)
+
+
+##################################################################
+#use this section to look at taxonomic biases#####################
+##################################################################
+
+Tax_bias_summary<-ddply(Geom_bias_loc,.(Name),summarise,total=length(Location))
+
+
+Corr_names<-gnr_resolve(names = Tax_bias_summary$Name,best_match_only=T)
+
+Inv_species<-data.frame(Inv_sp=Corr_names$matched_name,total=Tax_bias_summary$total,Type="Global")
+
+Studies<-read.csv("Data/Studies_combined.csv")
+Study_species<-ddply(Studies,.(Inv_sp),summarise,total=length(Study))
+Study_species$Type<-"Study"
+
+unique(Study_species$Inv_sp)
+
+Combined_species<-rbind(Study_species,Inv_species)
+
+Try_gf<-read.csv("Data/TRY_growth_form.csv")
+
+Species_gf<-merge(Combined_species,Try_gf,by.x="Inv_sp",by.y="AccSpeciesName",all.x=T)
+Species_gf2<-subset(Species_gf,PlantGrowthForm!=""&PlantGrowthForm!="<NA>")
+head(Species_gf2)
+ddply(Species_gf2,.(Type),summarise,tot_sum=sum(total))
+Species_gf2$perc<-ifelse(Species_gf2$Type=="Global",(Species_gf2$total/8602)*100,(Species_gf2$total/116)*100)
+Species_gf3<-ddply(Species_gf2,.(Type,PlantGrowthForm),summarise,total=sum(perc))
+Species_gf4<-rbind(Species_gf3,data.frame(Type="Study",PlantGrowthForm="fern",total=0))
+
+
+theme_set(theme_bw(base_size=12))
+GF_plot1<-ggplot(Species_gf4,aes(x=PlantGrowthForm,y=total,colour=Type,fill=Type))+geom_bar(stat="identity",width=0.6,position = position_dodge(width = 0.8))
+GF_plot2<-GF_plot1+ylab("Percentage of locations (%)")+xlab("Plant growth form")+scale_color_brewer("Data set",palette="Set1")+scale_fill_brewer("Data set",palette="Set1")
+GF_plot2+coord_cartesian(ylim=c(0,45))
+ggsave("Figures/Growthform_diff_bias.pdf",width = 6,height=4,units = "in",dpi=400)
+ggsave("Figures/Growthform_diff_bias.png",width = 6,height=4,units = "in",dpi=400)
