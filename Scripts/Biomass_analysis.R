@@ -26,6 +26,7 @@ AGB$Height_RR<-log(AGB$Inv_height)-log(AGB$Native_height)
 AGB$Height_prop<-(AGB$Inv_height-AGB$Native_height)/AGB$Native_height
 AGB$Woody_diff<-AGB$Inv_woodiness-AGB$Native_woodiness
 AGB$Diff_RR<-log(AGB$EF_I)-log(AGB$EF_UI)
+AGB$CWD<-abs(AGB$CWD)
 AGB$CWD2<-(AGB$CWD-mean(AGB$CWD))/sd(AGB$CWD)
 
 #correct the variance for all measurements so that they are equal to SD
@@ -57,7 +58,7 @@ Moran_plot2<-Moran_plot1+theme(panel.grid.major = element_blank(),panel.grid.min
 Moran_plot2+geom_hline(y=0,lty=2)+xlab("Distance between sites (km)")+ylab("Moran's I correlation")+scale_size_continuous(range = c(1,3))
 ggsave("Figures/AGB_correl.pdf",height=6,width=8,units="in",dpi=300)
 
-
+Site_unique<-unique(AGB_ES$SiteID)
 Model_AIC_summary<-NULL
 for (i in 1:10000){
   print(i)
@@ -74,6 +75,8 @@ for (i in 1:10000){
   Model4<-rma.mv(yi~Height_RR*CWD2,vi,random=list(~1|Study),data=AGB_samp,method="ML")
   Model_AIC<-data.frame(AICc=c(Model0$fit.stats$ML[5],Model1$fit.stats$ML[5],Model2$fit.stats$ML[5],#produce AICc values for the models
                                Model3$fit.stats$ML[5],Model4$fit.stats$ML[5]))
+  qplot(fitted(Model4),AGB_samp$yi)+geom_abline(intercept=0,slope=1)
+  
   Model_AIC$Vars<-c("Null","Height","CWD","Height+CWD", #details of model variables
                     "Height*CWD")
   Model_AIC$logLik<-c(Model0$fit.stats$ML[1],Model1$fit.stats$ML[1],Model2$fit.stats$ML[1],#put logLiklihood in the table
@@ -117,9 +120,9 @@ for (i in 1:10000){
                          ci_lb=round(coef(summary(Model4))[5],2),
                          ci_ub=round(coef(summary(Model4))[6],2))
   Param_boot<-rbind(Param_vals,Param_boot)
-  AGB.cor<-spline.correlog(AGB_samp$Latitude, AGB_samp$Longitude, resid(Model4), latlon=T,resamp=1000,quiet=T)
-  AGB.cor2<-data.frame(Dist=AGB.cor$boot$boot.summary$predicted$x[1,],Cor=AGB.cor$boot$boot.summary$predicted$y[6,],UCI=AGB.cor$boot$boot.summary$predicted$y[2,],LCI=AGB.cor$boot$boot.summary$predicted$y[10,])
-  Resid_corr<-rbind(Resid_corr,AGB.cor2)
+  #AGB.cor<-spline.correlog(AGB_samp$Latitude, AGB_samp$Longitude, resid(Model4), latlon=T,resamp=1000,quiet=T)
+  #AGB.cor2<-data.frame(Dist=AGB.cor$boot$boot.summary$predicted$x[1,],Cor=AGB.cor$boot$boot.summary$predicted$y[6,],UCI=AGB.cor$boot$boot.summary$predicted$y[2,],LCI=AGB.cor$boot$boot.summary$predicted$y[10,])
+  #Resid_corr<-rbind(Resid_corr,AGB.cor2)
 }
 
 #produce summary of parameter estimates
@@ -172,7 +175,7 @@ new.data <- new.data[complete.cases(new.data),]
 
 # Calculate yi as you did:
 
-new.data$yi<-(new.data$Height_RR*0.88) + 0.45 + (0.16*new.data$CWD2) + ((new.data$CWD2*new.data$Height_RR)*-0.16)
+new.data$yi<-(new.data$Height_RR*0.88) + 0.45 + (-0.16*new.data$CWD2) + ((new.data$CWD2*new.data$Height_RR)*0.16)
 
 # Plot
 theme_set(theme_bw(base_size=12))
