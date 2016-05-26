@@ -17,6 +17,9 @@ library(raster)
 library(gridExtra)
 library(grid)
 library(taxize)
+library(binr)
+library(cowplot)
+
 
 #import list of all plant species that have datasheets in the ISC
 ISC_records<-read.csv("Data/ISC_records.csv",stringsAsFactors = F)
@@ -125,41 +128,28 @@ Inv_CWD2<-Inv_CWD+ylab("Percentage of locations with\n invasive plant records")+
 Study_CWD<-ggplot(studies,aes(x=CWD))+geom_histogram(aes(y=(..count../sum(..count..))*100))+xlim(c(-2500,0))
 Study_CWD2<-Study_CWD+ylab("Percentage of datapoints \nused in study")+xlab("Climatic water deficit (mm)")
 
-pdf("Figures/Bias_CWD.pdf")
-grid.arrange(Inv_CWD2,Study_CWD2)
-dev.off()
 
-Geom_bias_loc[,10]
-data.frame(CWD=studies[,4]
-  
+studies_bind<-studies[,c(2:4)]
+Geo_bias_bind<-Geom_bias_loc[,c(8,9,10)]
+colnames(Geo_bias_bind)<-c("long","lat","CWD")
+colnames(studies_bind)
+Geo_bias_bind$Type<-"Global"
+studies_bind$Type<-"Study"
+CWD_bind<-rbind(Geo_bias_bind,studies_bind)
+CWD_bind<-CWD_bind[complete.cases(CWD_bind),]
+CWD_bind$CWD<-abs(CWD_bind$CWD)
+CWD_bind$CWD_bins<-as.numeric(as.character(cut(CWD_bind$CWD, breaks = c(0, seq(100, 2300, by = 100)), labels = seq(0,2200,by=100),include.lowest=T)))
 
 
-#now try putting all these figures together into one
-pdf("Figures/Biases.pdf")
-grid.arrange(P_Bias4,Inv_CWD2,P_Studies4,Study_CWD2,ncol=2)
-dev.off()
+CWD_bind_perc<-ddply(CWD_bind,.(Type),summarise,
+              prop=as.numeric(prop.table(table(CWD_bins))),
+              CWD=as.numeric(names(table(CWD_bins))))
 
-#now a figure of just the difference in percentage of studies for different CWD values
-Geom_bias_loc$CWD_bin<-cut(Geom_bias_loc$CWD,breaks = seq(-2500,0,by = 250),labels= seq(-2500,-250,by = 250),include.lowest=T)
-Geom_bias_loc2<-Geom_bias_loc[complete.cases(Geom_bias_loc),]
-head(Geom_bias_loc2)
-Geom_bias_CWD_summary<-ddply(Geom_bias_loc2,.(CWD_bin),summarise,perc=(length(Name)/nrow(Geom_bias_loc2))*100)
+CWD_bind_perc<-rbind(CWD_bind_perc,data.frame(Type="Study",prop=0,CWD=seq(1600,2200,by=100)))
 
-studies$CWD_bin<-cut(studies$CWD,breaks = seq(-2500,0,by = 250),labels= seq(-2500,-250,by = 250),include.lowest=T)
-studies2<-studies[complete.cases(studies),]
-head(studies2)
-studies_bias_CWD_summary<-ddply(studies2,.(CWD_bin),summarise,perc=(length(lat)/nrow(studies2))*100)
 
-CWD_comp<-merge(studies_bias_CWD_summary,Geom_bias_CWD_summary,by="CWD_bin",all.y=T)
-CWD_comp[is.na(CWD_comp)]<-0
-CWD_comp$diff<-CWD_comp$perc.x-CWD_comp$perc.y
-
-#plot pf differences in percentage of sites in different climatic zones
-theme_set(theme_bw(base_size=12))
-CWD_P1<-ggplot(CWD_comp,aes(x=CWD_bin,y=diff))+geom_point()+geom_hline(yintercept=0,lty=2)
-CWD_P1+ylab("Difference in percentage of sites \nused in our study vs global records")+xlab("Climatic water deficit (mm)")
-ggsave("Figures/CWD_diff_bias.pdf",width = 6,height=4,units = "in",dpi=400)
-ggsave("Figures/CWD_diff_bias.png",width = 6,height=4,units = "in",dpi=400)
+Study_CWD<-ggplot(CWD_bind_perc,aes(CWD,prop*100,fill=Type))+geom_bar(stat="identity",position = "dodge")
+Study_CWD2<-Study_CWD+ylab("Percentage of locations")+xlab("Climatic water deficit (mm)")+scale_y_continuous(limits = c(0,25),)+scale_fill_brewer("Data set",palette="Set1")
 
 
 ##################################################################
@@ -192,9 +182,36 @@ Species_gf3<-ddply(Species_gf2,.(Type,PlantGrowthForm),summarise,total=sum(perc)
 Species_gf4<-rbind(Species_gf3,data.frame(Type="Study",PlantGrowthForm="fern",total=0))
 
 
-theme_set(theme_bw(base_size=12))
-GF_plot1<-ggplot(Species_gf4,aes(x=PlantGrowthForm,y=total,colour=Type,fill=Type))+geom_bar(stat="identity",width=0.6,position = position_dodge(width = 0.8))
-GF_plot2<-GF_plot1+ylab("Percentage of locations (%)")+xlab("Plant growth form")+scale_color_brewer("Data set",palette="Set1")+scale_fill_brewer("Data set",palette="Set1")
-GF_plot2+coord_cartesian(ylim=c(0,45))
-ggsave("Figures/Growthform_diff_bias.pdf",width = 6,height=4,units = "in",dpi=400)
-ggsave("Figures/Growthform_diff_bias.png",width = 6,height=4,units = "in",dpi=400)
+theme_set(theme_cowplot())
+GF_plot1<-ggplot(Species_gf4,aes(x=PlantGrowthForm,y=total,fill=Type))+geom_bar(stat="identity",width=0.6,position = position_dodge(width = 0.8))
+GF_plot2<-GF_plot1+ylab("Percentage of locations")+xlab("Plant growth form")+scale_fill_brewer("Data set",palette="Set1")
+GF_plot3<-GF_plot2+coord_cartesian(ylim=c(0,45))
+
+#put cwd and growth form figures into one plot
+
+prow<-plot_grid(Study_CWD2+ theme(legend.position="none"), GF_plot3+ theme(legend.position="none"), labels = c("(a)", "(b)"),nrow=2, align = "v")
+
+# extract the legend from one of the plots
+# (clearly the whole thing only makes sense if all plots
+# have the same legend, so we can arbitrarily pick one.)
+grobs <- ggplotGrob(GF_plot3 + theme(legend.position="bottom"))$grobs
+legend_b <- grobs[[which(sapply(grobs, function(x) x$name) == "guide-box")]]
+
+
+p <- plot_grid( prow, legend_b, ncol = 1, rel_heights = c(3, .2))
+
+save_plot("Figures/biases.pdf", p,
+          ncol = 2, # we're saving a grid plot of 2 columns
+          # each individual subplot should have an aspect ratio of 1.3
+          base_height=8,
+          base_width=4
+)
+
+?save_plot
+
+save_plot("Figures/biases.png", p,
+          ncol = 2, # we're saving a grid plot of 2 columns
+          # each individual subplot should have an aspect ratio of 1.3
+          base_height=8,
+          base_width=4
+)
