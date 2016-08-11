@@ -60,6 +60,21 @@ for (i in 1:10000) {
     Carb_sub<-Carb_sub[sample(nrow(Carb_sub), 1), ] 
     Carb_samp<-rbind(Carb_sub,Carb_samp)
   }
+  Model0<-rma.mv(yi~1,vi,random=list(~1|Study),data=Carb_samp,method="ML")
+  Model1<-rma.mv(yi~Inv_height,vi,random=list(~1|Study),data=Carb_samp,method="ML")
+  Model2<-rma.mv(yi~Inv_height+CWD2,vi,random=list(~1|Study),data=Carb_samp,method="ML")
+  Model3<-rma.mv(yi~Inv_height*CWD2,vi,random=list(~1|Study),data=Carb_samp,method="ML")
+  Model4<-rma.mv(yi~Height_RR,vi,random=list(~1|Study),data=Carb_samp,method="ML")
+  Model5<-rma.mv(yi~CWD2,vi,random=list(~1|Study),data=Carb_samp,method="ML")
+  Model6<-rma.mv(yi~Height_RR+CWD2,vi,random=list(~1|Study),data=Carb_samp,method="ML")
+  Model7<-rma.mv(yi~Height_RR*CWD2,vi,random=list(~1|Study),data=Carb_samp,method="ML")
+  Model_AIC<-data.frame(AICc=c(Model0$fit.stats$ML[5],Model1$fit.stats$ML[5],Model2$fit.stats$ML[5],#produce AICc values for the models
+                               Model3$fit.stats$ML[5],Model4$fit.stats$ML[5],Model5$fit.stats$ML[5],Model6$fit.stats$ML[5],Model7$fit.stats$ML[5]))
+  Model_AIC$Vars<-c("Null","Height","Height+CWD","Height*CWD","Relative height", "CWD", #details of model variables
+                    "Relative height+CWD","Relative Height*CWD")
+  Model_AIC$logLik<-c(Model0$fit.stats$ML[1],Model1$fit.stats$ML[1],Model2$fit.stats$ML[1],#put logLiklihood in the table
+                      Model3$fit.stats$ML[1],Model4$fit.stats$ML[1],Model5$fit.stats$ML[1],
+                      Model6$fit.stats$ML[1],Model7$fit.stats$ML[1])
   Model0<-rma(yi~1,vi,data=Carb_samp,method="ML")
   Model1<-rma(yi~Inv_height,vi,data=Carb_samp,method="ML")
   Model2<-rma(yi~Inv_height+CWD2,vi,data=Carb_samp,method="ML")
@@ -68,22 +83,8 @@ for (i in 1:10000) {
   Model5<-rma(yi~CWD2,vi,data=Carb_samp,method="ML")
   Model6<-rma(yi~Height_RR+CWD2,vi,data=Carb_samp,method="ML")
   Model7<-rma(yi~Height_RR*CWD2,vi,data=Carb_samp,method="ML")
-
-  Model0$tau2
   
-  Model_AIC<-data.frame(AICc=c(Model0$fit.stats$ML[5],Model1$fit.stats$ML[5],Model2$fit.stats$ML[5],#produce AICc values for the models
-                               Model3$fit.stats$ML[5],Model4$fit.stats$ML[5]))
-  Model_AIC<-data.frame(AICc=c(Model0$fit.stats$ML[5],Model1$fit.stats$ML[5],Model2$fit.stats$ML[5],#produce AICc values for the models
-                               Model3$fit.stats$ML[5],Model4$fit.stats$ML[5],Model5$fit.stats$ML[5],Model6$fit.stats$ML[5],Model7$fit.stats$ML[5]))
-  Model_AIC$Vars<-c("Null","Height","Height+CWD","Height*CWD","Relative height", "CWD", #details of model variables
-                    "Relative height+CWD","Relative Height*CWD")
-  Model_AIC$logLik<-c(Model0$fit.stats$ML[1],Model1$fit.stats$ML[1],Model2$fit.stats$ML[1],#put logLiklihood in the table
-                      Model3$fit.stats$ML[1],Model4$fit.stats$ML[1],Model5$fit.stats$ML[1],
-                      Model6$fit.stats$ML[1],Model7$fit.stats$ML[1])
-  Null_dev<-Model0$tau2
-  Dev<-c(Model0$tau2,Model1$tau2,Model2$tau2,Model3$tau2,Model4$tau2,Model5$tau2,
-         Model6$tau2,Model7$tau2)#calculate deviance of models
-  Model_AIC$R2<-round(1-(Dev/Null_dev),2) #calculate pseudo-r squared using model deviance
+  Model_AIC$R2<-c(0,Model1$R2,Model2$R2,Model3$R2,Model4$R2,Model5$R2,Model6$R2,Model7$R2) #calculate pseudo-r squared of models
   Model_AIC$R2<-ifelse(Model_AIC$R2<0,0,Model_AIC$R2)
   Model_AIC<-Model_AIC[order(Model_AIC$AICc),] #reorder from lowest to highest
   Model_AIC$delta<-Model_AIC$AICc-Model_AIC$AICc[1]#calculate AICc delta
@@ -112,17 +113,15 @@ for (i in 1:10000){
     Carb_sub<-Carb_sub[sample(nrow(Carb_sub), 1), ]
     Carb_samp<-rbind(Carb_sub,Carb_samp)
   }
-  Model4<-rma(yi~Height_RR*CWD,vi,data=Carb_samp,method="REML")
-  Param_vals<-data.frame(Parameter=c("Intercept","Height","CWD","Height*CWD"),
+  Model4<-rma.mv(yi~Height_RR,vi,random=list(~1|Study),data=Carb_samp,method="REML")
+  
+  Param_vals<-data.frame(Parameter=c("Intercept","Height"),
                          estimate=round(coef(summary(Model4))[1],5),
                          se=round(coef(summary(Model4))[2],5),
                          pval=round(coef(summary(Model4))[4],5),
                          ci_lb=round(coef(summary(Model4))[5],5),
                          ci_ub=round(coef(summary(Model4))[6],5))
   Param_boot<-rbind(Param_vals,Param_boot)
-  #Soil.cor<-spline.correlog(Carb_samp$Latitude, Carb_samp$Longitude, resid(Model4), latlon=T,resamp=1000,quiet=T)
-  #Soil.corr2<-data.frame(Dist=Soil.cor$boot$boot.summary$predicted$x[1,],Cor=Soil.cor$boot$boot.summary$predicted$y[6,],UCI=Soil.cor$boot$boot.summary$predicted$y[2,],LCI=Soil.cor$boot$boot.summary$predicted$y[10,])
-  #Resid_corr<-rbind(Resid_corr,Soil.corr2)
 }
 
 
